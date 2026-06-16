@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>에스원 윤리·감사 제보 챗봇 / S-1 Ethics Report</title>
+<style>
+  :root{
+    --bg:#f4f7fb; --panel:#ffffff; --bot:#eef2f8; --user:#1b50a0;
+    --txt:#1a2332; --muted:#64748b; --accent:#1b50a0; --line:#e2e8f0;
+    --ok:#16a34a; --warn:#d97706;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic","Microsoft YaHei",sans-serif;
+       background:linear-gradient(160deg,#eaf0f8,#f6f9fd);color:var(--txt);
+       min-height:100vh;display:flex;justify-content:center;align-items:center;padding:16px}
+  .app{width:100%;max-width:480px;height:90vh;max-height:780px;background:var(--panel);
+       border:1px solid var(--line);border-radius:20px;display:flex;flex-direction:column;
+       overflow:hidden;box-shadow:0 16px 44px rgba(27,80,160,.15)}
+  header{padding:14px 18px;border-bottom:1px solid var(--line);background:rgba(27,80,160,.05)}
+  .htop{display:flex;align-items:center;gap:12px}
+  .logo{height:40px;padding:0 12px;border-radius:0;background:#ffffff;border:2px solid #1b50a0;
+        display:flex;align-items:center;justify-content:center;flex-shrink:0;
+        font-weight:800;font-size:19px;color:#1b50a0;letter-spacing:.5px}
+  header h1{font-size:15px;margin:0;font-weight:700}
+  header p{margin:2px 0 0;font-size:12px;color:var(--muted)}
+  .badge{margin-left:auto;font-size:11px;color:var(--ok);border:1px solid rgba(34,197,94,.4);
+         padding:3px 8px;border-radius:20px;background:rgba(34,197,94,.08);white-space:nowrap}
+  .langbar{display:flex;gap:6px;margin-top:10px}
+  .lang{font-size:12px;padding:4px 10px;border-radius:14px;border:1px solid var(--line);
+        background:transparent;color:var(--muted);cursor:pointer;transition:.15s}
+  .lang.active{border-color:var(--accent);color:var(--accent);background:rgba(56,189,248,.1)}
+  .chat{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:12px}
+  .row{display:flex;gap:8px;align-items:flex-end;animation:fade .25s ease}
+  .row.user{flex-direction:row-reverse}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .av{width:28px;height:28px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;
+      justify-content:center;font-size:14px;background:var(--bot)}
+  .row.user .av{background:var(--user)}
+  .bubble{max-width:78%;padding:11px 14px;border-radius:16px;font-size:14px;line-height:1.5;
+          background:var(--bot);border-bottom-left-radius:4px;white-space:pre-wrap;word-break:break-word}
+  .row.user .bubble{background:var(--user);color:#fff;border-bottom-right-radius:4px;border-bottom-left-radius:16px}
+  .opts{display:flex;flex-wrap:wrap;gap:8px;padding:0 18px 8px;justify-content:flex-start}
+  .opt{background:transparent;border:1px solid var(--accent);color:var(--accent);
+       padding:8px 14px;border-radius:20px;font-size:13px;cursor:pointer;transition:.15s}
+  .opt:hover{background:var(--accent);color:#ffffff}
+  .inputbar{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line);background:var(--panel)}
+  .inputbar textarea{flex:1;resize:none;background:var(--bot);border:1px solid var(--line);
+       color:var(--txt);border-radius:12px;padding:10px 12px;font-size:14px;font-family:inherit;height:44px;max-height:120px}
+  .inputbar textarea:focus{outline:none;border-color:var(--accent)}
+  .send{background:var(--accent);border:none;color:#ffffff;border-radius:12px;width:48px;
+        font-size:18px;cursor:pointer;font-weight:700}
+  .send:disabled{opacity:.4;cursor:not-allowed}
+  .summary{background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:14px;font-size:13px}
+  .summary h4{margin:0 0 10px;color:var(--accent);font-size:13px}
+  .summary table{width:100%;border-collapse:collapse}
+  .summary td{padding:6px 4px;border-bottom:1px solid var(--line);vertical-align:top}
+  .summary td.k{color:var(--muted);width:36%;white-space:nowrap}
+  .footnote{font-size:11px;color:var(--muted);text-align:center;padding:6px 0}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="htop">
+      <div class="logo">에스원</div>
+      <div>
+        <h1 id="hTitle"></h1>
+        <p id="hSub"></p>
+      </div>
+      <span class="badge" id="hBadge"></span>
+    </div>
+    <div class="langbar" id="langbar"></div>
+  </header>
+  <div class="chat" id="chat"></div>
+  <div class="opts" id="opts"></div>
+  <div class="inputbar" id="inputbar">
+    <textarea id="text" rows="1"></textarea>
+    <button class="send" id="send">➤</button>
+  </div>
+  <div class="footnote" id="hFoot"></div>
+</div>
+
+<script>
+/* ===================== 설정 (여기만 수정하면 됩니다) ===================== */
+const CONFIG = {
+  // 방법 A. Formspree (추천) — formspree.io 가입 후 엔드포인트 붙여넣기
+  FORMSPREE_ENDPOINT: "https://formspree.io/f/xlgkvrwl",   // 에스원 윤리·감사 제보 (권순범)
+  // 방법 B. EmailJS (대안)
+  EMAILJS: { PUBLIC_KEY:"", SERVICE_ID:"", TEMPLATE_ID:"" },
+  // 방법 C. 둘 다 비면 mailto(메일앱)로 동작
+  RECIPIENT_EMAIL: "audit@company.com"
+};
+/* ====================================================================== */
+
+/* ===================== 다국어 문구 ===================== */
+const LANG = {
+  ko:{ name:"한국어", flag:"한국어",
+    title:"에스원 윤리·감사 제보 채널", sub:"경영진단 / 내부 윤리제보 접수", badge:"🔒 비밀보장",
+    foot:"제보자 신원과 내용은 관련 법령에 따라 보호됩니다.",
+    inputOn:"여기에 입력하세요...", inputOff:"위 버튼을 선택하세요",
+    greeting:"안녕하세요. 윤리·감사 제보 채널입니다. 접수된 내용은 감사부서에 직접 전달되며, 제보자 신원은 철저히 보호됩니다.\n\n먼저, 어떤 방식으로 제보하시겠어요?",
+    anonOpts:["익명으로 제보","실명으로 제보"],
+    qCategory:"제보 유형을 선택해 주세요.",
+    categories:["회계부정 / 횡령·배임","부정청탁 / 금품수수","갑질 / 직장 내 괴롭힘","이해충돌 / 사익편취","정보보안 / 자료유출","안전 / 품질 위반","기타"],
+    qWhen:"해당 사안이 발생한 시기는 언제인가요? (예: 2026년 5월경, 최근 3개월 등)",
+    qDept:"관련된 부서 또는 장소를 알려주세요. (예: 구매팀, 본사 3층 등)",
+    qWho:"관련된 인물이 있다면 직책·이름을 알려주세요. 모르거나 밝히고 싶지 않으면 '없음'이라고 입력해 주세요.",
+    qDetail:"이제 가장 중요한 부분입니다. 무슨 일이 있었는지 육하원칙(누가/언제/어디서/무엇을/어떻게/왜)에 따라 최대한 구체적으로 작성해 주세요.",
+    qEvidence:"관련 증빙 자료(문서, 사진, 메일, 녹취 등)를 보유하고 계신가요?",
+    evidenceOpts:["있음 - 제출 가능","있음 - 제출 어려움","없음"],
+    qContact:"추가 확인이 필요할 수 있습니다. 연락 가능한 이메일 또는 전화번호를 남겨주세요.",
+    sumTitle:"📋 제보 내용 확인",
+    L:{anon:"제보 방식",category:"제보 유형",when:"발생 시기",dept:"부서/장소",who:"관련 인물",evidence:"증빙 자료",contact:"연락처",detail:"상세 내용"},
+    qConfirm:"위 내용으로 제보를 접수할까요?",
+    confirmOpts:["✅ 제보 접수","✏️ 처음부터 다시"],
+    sending:"제보를 전송 중입니다...",
+    success:"제보가 정상적으로 접수되었습니다.",
+    doneTpl:"접수가 완료되었습니다. 소중한 제보에 감사드립니다.\n\n접수번호: {ref}\n(추후 처리현황 문의 시 이 번호를 사용하세요.)\n\n{extra}",
+    mailtoExtra:"⚠️ 아직 자동발송이 설정되지 않아 메일앱이 열렸습니다. '보내기'를 눌러 제출을 완료해 주세요.",
+    errHttp:"전송에 실패했습니다. 잠시 후 다시 시도하거나 관리자에게 문의해 주세요. (HTTP {s})",
+    errNet:"네트워크 오류로 전송하지 못했습니다. 연결 상태를 확인 후 다시 시도해 주세요.",
+    anonContact:"(익명 제보)" },
+
+  en:{ name:"English", flag:"EN",
+    title:"S-1 Ethics & Audit Report Channel", sub:"Internal whistleblowing intake", badge:"🔒 Confidential",
+    foot:"Your identity and report are protected under applicable law.",
+    inputOn:"Type here...", inputOff:"Please choose an option above",
+    greeting:"Hello. This is the Ethics & Audit reporting channel. Your report goes directly to the audit team and your identity is strictly protected.\n\nFirst, how would you like to report?",
+    anonOpts:["Report anonymously","Report with my name"],
+    qCategory:"Please select the type of report.",
+    categories:["Accounting fraud / Embezzlement","Bribery / Improper solicitation","Workplace harassment / Abuse of power","Conflict of interest / Self-dealing","Information security / Data leak","Safety / Quality violation","Other"],
+    qWhen:"When did this occur? (e.g., around May 2026, last 3 months)",
+    qDept:"Which department or location is involved? (e.g., Procurement team, HQ 3rd floor)",
+    qWho:"If specific people are involved, share their title/name. If unknown or you'd rather not say, type 'None'.",
+    qDetail:"Now the most important part. Please describe what happened as specifically as possible (who / when / where / what / how / why).",
+    qEvidence:"Do you have any supporting evidence (documents, photos, emails, recordings)?",
+    evidenceOpts:["Yes - can submit","Yes - hard to submit","None"],
+    qContact:"We may need to follow up. Please leave an email or phone number we can reach you at.",
+    sumTitle:"📋 Review your report",
+    L:{anon:"Method",category:"Type",when:"When",dept:"Dept/Location",who:"People involved",evidence:"Evidence",contact:"Contact",detail:"Details"},
+    qConfirm:"Shall I submit this report?",
+    confirmOpts:["✅ Submit","✏️ Start over"],
+    sending:"Submitting your report...",
+    success:"Your report has been submitted successfully.",
+    doneTpl:"Submission complete. Thank you for your report.\n\nReference No.: {ref}\n(Use this number for any follow-up inquiries.)\n\n{extra}",
+    mailtoExtra:"⚠️ Auto-send is not configured yet, so your mail app opened. Press 'Send' to complete submission.",
+    errHttp:"Submission failed. Please try again later or contact the administrator. (HTTP {s})",
+    errNet:"Network error, could not submit. Check your connection and try again.",
+    anonContact:"(anonymous report)" },
+
+  zh:{ name:"中文", flag:"中文",
+    title:"S-1 道德与审计举报通道", sub:"内部举报受理", badge:"🔒 保密",
+    foot:"举报人身份及内容依法受到保护。",
+    inputOn:"在此输入...", inputOff:"请选择上方选项",
+    greeting:"您好。这里是道德与审计举报通道。您的举报将直接转交审计部门，举报人身份将受到严格保护。\n\n首先，您希望以哪种方式举报？",
+    anonOpts:["匿名举报","实名举报"],
+    qCategory:"请选择举报类型。",
+    categories:["财务舞弊 / 侵占挪用","行贿受贿 / 不正当请托","职场霸凌 / 滥用职权","利益冲突 / 谋取私利","信息安全 / 资料泄露","安全 / 质量违规","其他"],
+    qWhen:"该事件发生在什么时候？(例如：2026年5月前后、最近3个月)",
+    qDept:"涉及哪个部门或地点？(例如：采购部、总部3楼)",
+    qWho:"如有相关人员，请提供其职务/姓名。如不清楚或不愿透露，请输入'无'。",
+    qDetail:"现在是最重要的部分。请尽量具体描述发生了什么（何人/何时/何地/何事/如何/为何）。",
+    qEvidence:"您是否持有相关证据（文件、照片、邮件、录音）？",
+    evidenceOpts:["有 - 可提交","有 - 难以提交","无"],
+    qContact:"我们可能需要进一步核实。请留下可联系的邮箱或电话。",
+    sumTitle:"📋 确认举报内容",
+    L:{anon:"方式",category:"类型",when:"发生时间",dept:"部门/地点",who:"相关人员",evidence:"证据",contact:"联系方式",detail:"详细内容"},
+    qConfirm:"确认提交此举报吗？",
+    confirmOpts:["✅ 提交举报","✏️ 重新开始"],
+    sending:"正在提交举报...",
+    success:"您的举报已成功提交。",
+    doneTpl:"提交完成。感谢您的举报。\n\n受理编号：{ref}\n（如需查询处理进度，请使用此编号。）\n\n{extra}",
+    mailtoExtra:"⚠️ 自动发送尚未配置，已打开邮件应用。请点击'发送'完成提交。",
+    errHttp:"提交失败。请稍后重试或联系管理员。(HTTP {s})",
+    errNet:"网络错误，无法提交。请检查连接后重试。",
+    anonContact:"（匿名举报）" },
+
+  vi:{ name:"Tiếng Việt", flag:"VI",
+    title:"S-1 Kênh báo cáo Đạo đức & Kiểm toán", sub:"Tiếp nhận tố giác nội bộ", badge:"🔒 Bảo mật",
+    foot:"Danh tính và nội dung tố giác được bảo vệ theo quy định pháp luật.",
+    inputOn:"Nhập tại đây...", inputOff:"Vui lòng chọn một mục ở trên",
+    greeting:"Xin chào. Đây là kênh báo cáo Đạo đức & Kiểm toán. Báo cáo của bạn được gửi trực tiếp đến bộ phận kiểm toán và danh tính của bạn được bảo vệ nghiêm ngặt.\n\nTrước tiên, bạn muốn báo cáo theo cách nào?",
+    anonOpts:["Báo cáo ẩn danh","Báo cáo nêu tên"],
+    qCategory:"Vui lòng chọn loại báo cáo.",
+    categories:["Gian lận kế toán / Biển thủ","Hối lộ / Nhận tiền bất chính","Quấy rối / Lạm quyền nơi làm việc","Xung đột lợi ích / Tư lợi","An ninh thông tin / Rò rỉ dữ liệu","Vi phạm an toàn / Chất lượng","Khác"],
+    qWhen:"Sự việc xảy ra khi nào? (vd: khoảng tháng 5/2026, 3 tháng gần đây)",
+    qDept:"Bộ phận hoặc địa điểm nào liên quan? (vd: Phòng mua hàng, tầng 3 trụ sở)",
+    qWho:"Nếu có người liên quan, vui lòng cho biết chức danh/tên. Nếu không rõ hoặc không muốn nêu, hãy nhập 'Khong'.",
+    qDetail:"Đây là phần quan trọng nhất. Vui lòng mô tả sự việc càng cụ thể càng tốt (ai / khi nào / ở đâu / việc gì / như thế nào / tại sao).",
+    qEvidence:"Bạn có bằng chứng nào không (tài liệu, ảnh, email, ghi âm)?",
+    evidenceOpts:["Có - có thể nộp","Có - khó nộp","Không có"],
+    qContact:"Chúng tôi có thể cần liên hệ thêm. Vui lòng để lại email hoặc số điện thoại.",
+    sumTitle:"📋 Xác nhận báo cáo",
+    L:{anon:"Hình thức",category:"Loại",when:"Thời gian",dept:"Bộ phận/Địa điểm",who:"Người liên quan",evidence:"Bằng chứng",contact:"Liên hệ",detail:"Chi tiết"},
+    qConfirm:"Tôi gửi báo cáo này nhé?",
+    confirmOpts:["✅ Gửi báo cáo","✏️ Làm lại từ đầu"],
+    sending:"Đang gửi báo cáo...",
+    success:"Báo cáo của bạn đã được gửi thành công.",
+    doneTpl:"Đã hoàn tất. Cảm ơn bạn đã báo cáo.\n\nMã tiếp nhận: {ref}\n(Dùng mã này khi cần hỏi về tiến trình xử lý.)\n\n{extra}",
+    mailtoExtra:"⚠️ Chức năng tự động gửi chưa được cấu hình nên ứng dụng email đã mở. Nhấn 'Gửi' để hoàn tất.",
+    errHttp:"Gửi thất bại. Vui lòng thử lại sau hoặc liên hệ quản trị viên. (HTTP {s})",
+    errNet:"Lỗi mạng, không thể gửi. Kiểm tra kết nối và thử lại.",
+    anonContact:"(to giac an danh)" }
+};
+const LANG_ORDER = ["ko","en","zh","vi"];
+/* ====================================================================== */
+
+const chat=document.getElementById('chat'), optsEl=document.getElementById('opts');
+const textEl=document.getElementById('text'), sendBtn=document.getElementById('send');
+
+let lang="ko", T=LANG.ko;
+const data={anonIdx:-1, categoryIdx:-1, evidenceIdx:-1, when:"", dept:"", who:"", detail:"", contact:""};
+let step=0, pending=null, minLen=1;
+
+function applyChrome(){
+  document.documentElement.lang = lang;
+  document.getElementById('hTitle').textContent=T.title;
+  document.getElementById('hSub').textContent=T.sub;
+  document.getElementById('hBadge').textContent=T.badge;
+  document.getElementById('hFoot').textContent=T.foot;
+}
+function buildLangBar(){
+  const bar=document.getElementById('langbar'); bar.innerHTML='';
+  LANG_ORDER.forEach(code=>{
+    const b=document.createElement('button');
+    b.className='lang'+(code===lang?' active':''); b.textContent=LANG[code].flag;
+    b.onclick=()=>{ if(code!==lang) setLang(code); };
+    bar.appendChild(b);
+  });
+}
+function setLang(code){
+  lang=code; T=LANG[code];
+  for(const k in data){ data[k]= (k.endsWith('Idx')? -1 : ""); }
+  applyChrome(); buildLangBar();
+  chat.innerHTML=''; optsEl.innerHTML=''; step=0; flow[0]();
+}
+
+function botSay(content,isNode){
+  const row=document.createElement('div'); row.className='row';
+  row.innerHTML='<div class="av"><svg viewBox="0 0 24 24" width="16" height="16" fill="#7c8aa0"><circle cx="12" cy="8" r="4.2"/><path d="M3.6 20.6c0-4.7 3.8-8.2 8.4-8.2s8.4 3.5 8.4 8.2z"/></svg></div><div class="bubble"></div>';
+  if(isNode) row.querySelector('.bubble').appendChild(content);
+  else row.querySelector('.bubble').textContent=content;
+  chat.appendChild(row); scroll();
+}
+function userSay(text){
+  const row=document.createElement('div'); row.className='row user';
+  row.innerHTML='<div class="av">🙋</div><div class="bubble"></div>';
+  row.querySelector('.bubble').textContent=text;
+  chat.appendChild(row); scroll();
+}
+function options(list,cb){
+  optsEl.innerHTML='';
+  list.forEach((o,i)=>{
+    const b=document.createElement('button'); b.className='opt'; b.textContent=o;
+    b.onclick=()=>{ optsEl.innerHTML=''; cb(o,i); };
+    optsEl.appendChild(b);
+  });
+}
+function setInput(on){
+  textEl.disabled=!on; sendBtn.disabled=!on;
+  textEl.placeholder=on?T.inputOn:T.inputOff;
+  if(on) textEl.focus();
+}
+function scroll(){ setTimeout(()=>chat.scrollTop=chat.scrollHeight,30); }
+function expect(cb,min){ pending=cb; minLen=min||1; }
+
+const flow=[
+  ()=>{ botSay(T.greeting); setInput(false);
+        options(T.anonOpts,(v,i)=>{ userSay(v); data.anonIdx=i; next(); }); },
+  ()=>{ botSay(T.qCategory); setInput(false);
+        options(T.categories,(v,i)=>{ userSay(v); data.categoryIdx=i; next(); }); },
+  ()=>{ botSay(T.qWhen); setInput(true); expect(v=>{ data.when=v; next(); }); },
+  ()=>{ botSay(T.qDept); setInput(true); expect(v=>{ data.dept=v; next(); }); },
+  ()=>{ botSay(T.qWho); setInput(true); expect(v=>{ data.who=v; next(); }); },
+  ()=>{ botSay(T.qDetail); setInput(true); expect(v=>{ data.detail=v; next(); },10); },
+  ()=>{ botSay(T.qEvidence); setInput(false);
+        options(T.evidenceOpts,(v,i)=>{ userSay(v); data.evidenceIdx=i; next(); }); },
+  ()=>{ if(data.anonIdx===1){ botSay(T.qContact); setInput(true); expect(v=>{ data.contact=v; next(); }); }
+        else { data.contact=T.anonContact; next(); } },
+  ()=>{ showSummary(); }
+];
+function next(){ step++; flow[step](); }
+
+sendBtn.onclick=submitText;
+textEl.addEventListener('keydown',e=>{ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); submitText(); }});
+textEl.addEventListener('input',()=>{ textEl.style.height='44px'; textEl.style.height=Math.min(textEl.scrollHeight,120)+'px'; });
+function submitText(){
+  const v=textEl.value.trim(); if(!pending) return;
+  if(v.length<minLen){ textEl.style.borderColor='var(--warn)'; setTimeout(()=>textEl.style.borderColor='',400); return; }
+  userSay(v); textEl.value=''; textEl.style.height='44px';
+  const cb=pending; pending=null; setInput(false); cb(v);
+}
+
+function showSummary(){
+  setInput(false);
+  const box=document.createElement('div'); box.className='summary';
+  const rows=[
+    [T.L.anon, T.anonOpts[data.anonIdx]],
+    [T.L.category, T.categories[data.categoryIdx]],
+    [T.L.when, data.when],
+    [T.L.dept, data.dept],
+    [T.L.who, data.who],
+    [T.L.evidence, T.evidenceOpts[data.evidenceIdx]],
+    [T.L.contact, data.contact],
+    [T.L.detail, data.detail]
+  ];
+  box.innerHTML='<h4>'+esc(T.sumTitle)+'</h4><table>'+
+    rows.map(r=>'<tr><td class="k">'+esc(r[0])+'</td><td>'+esc(r[1])+'</td></tr>').join('')+'</table>';
+  botSay(box,true);
+  botSay(T.qConfirm);
+  options(T.confirmOpts,(v,i)=>{ userSay(v); if(i===1){ setLang(lang); } else deliver(); });
+}
+
+function buildBody(){
+  const K=LANG.ko, ref="ETH-"+Date.now().toString().slice(-8);
+  const body=
+"■ 윤리·감사 제보 접수\n"+
+"접수번호: "+ref+"\n"+
+"접수일시: "+new Date().toLocaleString('ko-KR')+"\n"+
+"작성언어: "+T.name+"\n\n"+
+"[제보 방식] "+K.anonOpts[data.anonIdx]+"\n"+
+"[제보 유형] "+K.categories[data.categoryIdx]+"\n"+
+"[발생 시기] "+data.when+"\n"+
+"[부서/장소] "+data.dept+"\n"+
+"[관련 인물] "+data.who+"\n"+
+"[증빙 자료] "+K.evidenceOpts[data.evidenceIdx]+"\n"+
+"[연 락 처] "+data.contact+"\n\n"+
+"[상세 내용]\n"+data.detail+"\n";
+  return { ref, subject:"[윤리제보 "+ref+"] "+K.categories[data.categoryIdx], body };
+}
+
+function deliver(){
+  const msg=buildBody(), cfg=CONFIG.EMAILJS;
+  if(CONFIG.FORMSPREE_ENDPOINT) sendViaFormspree(msg);
+  else if(cfg.PUBLIC_KEY&&cfg.SERVICE_ID&&cfg.TEMPLATE_ID) sendViaEmailJS(msg);
+  else {
+    window.location.href="mailto:"+CONFIG.RECIPIENT_EMAIL+"?subject="+encodeURIComponent(msg.subject)+"&body="+encodeURIComponent(msg.body);
+    doneMessage(msg.ref,T.mailtoExtra);
+  }
+}
+function sendViaFormspree(msg){
+  botSay(T.sending);
+  fetch(CONFIG.FORMSPREE_ENDPOINT,{
+    method:"POST", headers:{"Content-Type":"application/json","Accept":"application/json"},
+    body:JSON.stringify({ _subject:msg.subject, ref:msg.ref, report:msg.body })
+  }).then(r=>{ if(r.ok) doneMessage(msg.ref,T.success); else botSay(T.errHttp.replace('{s}',r.status)); })
+    .catch(()=>botSay(T.errNet));
+}
+function sendViaEmailJS(msg){
+  botSay(T.sending);
+  const s=document.createElement('script');
+  s.src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js";
+  s.onload=()=>{ emailjs.init({publicKey:CONFIG.EMAILJS.PUBLIC_KEY});
+    emailjs.send(CONFIG.EMAILJS.SERVICE_ID,CONFIG.EMAILJS.TEMPLATE_ID,{
+      subject:msg.subject, body:msg.body, reply_to:(data.contact.indexOf("@")>=0?data.contact:CONFIG.RECIPIENT_EMAIL)
+    }).then(()=>doneMessage(msg.ref,T.success)).catch(err=>botSay(T.errHttp.replace('{s}',(err&&err.text)||'')));
+  };
+  s.onerror=()=>botSay(T.errNet);
+  document.body.appendChild(s);
+}
+function doneMessage(ref,extra){ botSay(T.doneTpl.replace('{ref}',ref).replace('{extra}',extra)); }
+function esc(s){ return (s||'').replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];}); }
+
+applyChrome(); buildLangBar(); flow[0]();
+</script>
+</body>
+</html>
