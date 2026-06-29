@@ -445,7 +445,16 @@ function buildBody(){
 "[성    명] "+(data.anonIdx===1? data.name : "(익명)")+"\n"+
 "[연 락 처] "+data.contact+"\n\n"+
 "[상세 내용]\n"+data.detail+"\n";
-  return { ref, subject:"[윤리제보 "+ref+"] "+K.categories[data.categoryIdx], body };
+  const fields={
+    ref:ref, channel:"챗봇",
+    anon:K.anonOpts[data.anonIdx], category:K.categories[data.categoryIdx],
+    when:data.when, dept:data.dept, who:data.who,
+    name:(data.anonIdx===1? data.name : "(익명)"), contact:data.contact,
+    evidence:K.evidenceOpts[data.evidenceIdx],
+    files:(data.files.length? data.files.map(f=>f.name).join(", ") : "없음"),
+    detail:data.detail, lang:T.name
+  };
+  return { ref, subject:"[윤리제보 "+ref+"] "+K.categories[data.categoryIdx], body, fields };
 }
 
 function deliver(){
@@ -464,7 +473,7 @@ function sendViaAppsScript(msg){
   fetch(CONFIG.APPSCRIPT_ENDPOINT,{
     method:"POST", mode:"no-cors",
     headers:{"Content-Type":"text/plain;charset=utf-8"},
-    body:JSON.stringify({ subject:msg.subject, body:msg.body, files:data.files })
+    body:JSON.stringify({ subject:msg.subject, body:msg.body, files:data.files, fields:msg.fields })
   }).then(()=>doneMessage(msg.ref,T.success))
     .catch(()=>botSay(T.errNet));
 }
