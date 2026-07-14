@@ -2,65 +2,175 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>에스원 윤리·감사 제보 챗봇 / S-1 Ethics Report</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>에스원 윤리·감사 제보 채널 / S-1 Ethics Report</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <style>
   :root{
-    --bg:#f4f7fb; --panel:#ffffff; --bot:#eef2f8; --user:#1b50a0;
-    --txt:#1a2332; --muted:#64748b; --accent:#1b50a0; --line:#e2e8f0;
-    --ok:#16a34a; --warn:#d97706;
+    --bg1:#eaf0f8; --bg2:#f6f9fd;
+    --panel:#ffffff; --bot:#eef2f8; --botTxt:#1a2332;
+    --user:#1b50a0; --userTxt:#ffffff;
+    --txt:#16202e; --muted:#4a5666; --faint:#64748b;
+    --accent:#1b50a0; --accentDark:#153f80; --accentTint:rgba(27,80,160,.08);
+    --line:#e2e8f0; --ok:#16a34a; --warn:#d97706;
+    --focus:#2563eb;
+    --shadow:0 16px 44px rgba(27,80,160,.16);
+    --radius:20px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg1:#0d1526; --bg2:#101a30;
+      --panel:#151f33; --bot:#1e2a42; --botTxt:#e6ecf5;
+      --user:#3b82f6; --userTxt:#ffffff;
+      --txt:#e6ecf5; --muted:#a9b6c8; --faint:#8494a8;
+      --accent:#5b9bf0; --accentDark:#4a86d8; --accentTint:rgba(91,155,240,.14);
+      --line:#2a3752; --focus:#8ab4ff;
+      --shadow:0 16px 44px rgba(0,0,0,.5);
+    }
   }
   *{box-sizing:border-box}
+  html,body{height:100%}
   body{margin:0;font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic","Microsoft YaHei",sans-serif;
-       background:linear-gradient(160deg,#eaf0f8,#f6f9fd);color:var(--txt);
-       min-height:100vh;display:flex;justify-content:center;align-items:center;padding:16px}
-  .app{width:100%;max-width:480px;height:90vh;max-height:780px;background:var(--panel);
-       border:1px solid var(--line);border-radius:20px;display:flex;flex-direction:column;
-       overflow:hidden;box-shadow:0 16px 44px rgba(27,80,160,.15)}
-  header{padding:14px 18px;border-bottom:1px solid var(--line);background:rgba(27,80,160,.05)}
+       background:linear-gradient(160deg,var(--bg1),var(--bg2));color:var(--txt);
+       min-height:100dvh;display:flex;justify-content:center;align-items:center;
+       padding:max(16px,env(safe-area-inset-top)) 16px max(16px,env(safe-area-inset-bottom))}
+  .app{width:100%;max-width:480px;height:90dvh;max-height:800px;background:var(--panel);
+       border:1px solid var(--line);border-radius:var(--radius);display:flex;flex-direction:column;
+       overflow:hidden;box-shadow:var(--shadow);position:relative}
+
+  /* ---- Header ---- */
+  header{padding:14px 18px;border-bottom:1px solid var(--line);background:var(--accentTint)}
   .htop{display:flex;align-items:center;gap:12px}
-  .logo{height:40px;padding:0 12px;border-radius:0;background:#ffffff;border:2px solid #1b50a0;
+  .logo{height:38px;padding:0 12px;border-radius:8px;background:var(--panel);border:2px solid var(--accent);
         display:flex;align-items:center;justify-content:center;flex-shrink:0;
-        font-weight:800;font-size:19px;color:#1b50a0;letter-spacing:.5px}
-  header h1{font-size:15px;margin:0;font-weight:700}
-  header p{margin:2px 0 0;font-size:12px;color:var(--muted)}
-  .badge{margin-left:auto;font-size:11px;color:var(--ok);border:1px solid rgba(34,197,94,.4);
-         padding:3px 8px;border-radius:20px;background:rgba(34,197,94,.08);white-space:nowrap}
-  .langbar{display:flex;gap:6px;margin-top:10px}
-  .lang{font-size:12px;padding:4px 10px;border-radius:14px;border:1px solid var(--line);
-        background:transparent;color:var(--muted);cursor:pointer;transition:.15s}
-  .lang.active{border-color:var(--accent);color:var(--accent);background:rgba(56,189,248,.1)}
-  .chat{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:12px}
+        font-weight:800;font-size:18px;color:var(--accent);letter-spacing:.5px}
+  header h1{font-size:16px;margin:0;font-weight:800;color:var(--txt)}
+  header p{margin:2px 0 0;font-size:12.5px;color:var(--muted)}
+  .badge{margin-left:auto;display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--accent);
+         border:1px solid var(--accent);padding:4px 9px;border-radius:20px;background:var(--accentTint);
+         white-space:nowrap;font-weight:600}
+  .langbar{display:flex;gap:6px;margin-top:12px}
+  .lang{font-size:12px;padding:5px 11px;border-radius:14px;border:1px solid var(--line);
+        background:transparent;color:var(--muted);cursor:pointer;transition:.15s;font-family:inherit}
+  .lang:hover{border-color:var(--accent);color:var(--accent)}
+  .lang.active{border-color:var(--accent);color:#fff;background:var(--accent);font-weight:700}
+
+  /* ---- Progress ---- */
+  .progress{height:4px;background:var(--line);flex-shrink:0}
+  .progress .fill{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accentDark));
+                  transition:width .45s cubic-bezier(.4,0,.2,1)}
+
+  /* ---- Intro / landing ---- */
+  .intro{position:absolute;inset:0;background:var(--panel);z-index:20;display:flex;flex-direction:column;
+         justify-content:center;padding:34px 28px calc(28px + env(safe-area-inset-bottom));gap:18px;
+         animation:fade .3s ease;overflow-y:auto}
+  .intro .shield{width:60px;height:60px;color:var(--accent);flex-shrink:0}
+  .intro h2{margin:0;font-size:23px;font-weight:800;line-height:1.3;color:var(--txt)}
+  .intro .lead{margin:0;font-size:14.5px;color:var(--muted);line-height:1.55}
+  .intro ul{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column;gap:12px}
+  .intro li{display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--txt);line-height:1.5}
+  .intro li span{white-space:pre-line}
+  .intro li svg{width:20px;height:20px;flex-shrink:0;color:var(--ok);margin-top:1px}
+  .startBtn{margin-top:8px;background:var(--accent);color:#fff;border:none;border-radius:14px;
+            padding:15px;font-size:16px;font-weight:700;cursor:pointer;transition:.15s;font-family:inherit}
+  .startBtn:hover{background:var(--accentDark)}
+  .startBtn.secondary{background:transparent;color:var(--accent);border:1.5px solid var(--accent);margin-top:0}
+  .startBtn.secondary:hover{background:var(--accentTint);color:var(--accent)}
+  .intro .law{font-size:11.5px;color:var(--faint);text-align:center;line-height:1.5;margin:0;white-space:pre-line}
+
+  /* ---- Chat ---- */
+  .chat{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:12px;scroll-behavior:smooth}
   .row{display:flex;gap:8px;align-items:flex-end;animation:fade .25s ease}
   .row.user{flex-direction:row-reverse}
   @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-  .av{width:28px;height:28px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;
-      justify-content:center;font-size:14px;background:var(--bot)}
-  .row.user .av{background:var(--user)}
-  .bubble{max-width:78%;padding:11px 14px;border-radius:16px;font-size:14px;line-height:1.5;
-          background:var(--bot);border-bottom-left-radius:4px;white-space:pre-wrap;word-break:break-word}
-  .row.user .bubble{background:var(--user);color:#fff;border-bottom-right-radius:4px;border-bottom-left-radius:16px}
+  .av{width:30px;height:30px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;
+      justify-content:center;background:var(--bot);color:var(--accent)}
+  .av svg{width:17px;height:17px}
+  .row.user .av{background:var(--user);color:#fff}
+  .bubble{max-width:78%;padding:11px 14px;border-radius:16px;font-size:14.5px;line-height:1.55;
+          background:var(--bot);color:var(--botTxt);border-bottom-left-radius:4px;
+          white-space:pre-wrap;word-break:break-word}
+  .row.user .bubble{background:var(--user);color:var(--userTxt);border-bottom-right-radius:4px;border-bottom-left-radius:16px}
+
+  /* typing indicator */
+  .bubble.typing{display:inline-flex;gap:5px;align-items:center;padding:14px}
+  .bubble.typing span{width:7px;height:7px;border-radius:50%;background:var(--faint);opacity:.5;
+                      animation:blink 1.2s infinite ease-in-out}
+  .bubble.typing span:nth-child(2){animation-delay:.2s}
+  .bubble.typing span:nth-child(3){animation-delay:.4s}
+  @keyframes blink{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-4px);opacity:1}}
+
+  /* sending spinner */
+  .sending{display:inline-flex;align-items:center;gap:9px}
+  .spinner{width:15px;height:15px;border:2px solid var(--line);border-top-color:var(--accent);
+           border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* ---- Options / quick replies ---- */
   .opts{display:flex;flex-wrap:wrap;gap:8px;padding:0 18px 8px;justify-content:flex-start}
-  .opt{background:transparent;border:1px solid var(--accent);color:var(--accent);
-       padding:8px 14px;border-radius:20px;font-size:13px;cursor:pointer;transition:.15s}
-  .opt:hover{background:var(--accent);color:#ffffff}
-  .inputbar{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line);background:var(--panel)}
-  .inputbar textarea{flex:1;resize:none;background:var(--bot);border:1px solid var(--line);
-       color:var(--txt);border-radius:12px;padding:10px 12px;font-size:14px;font-family:inherit;height:44px;max-height:120px}
+  .opt{background:transparent;border:1.5px solid var(--accent);color:var(--accent);
+       padding:9px 15px;border-radius:20px;font-size:13.5px;cursor:pointer;transition:.15s;font-family:inherit}
+  .opt:hover{background:var(--accent);color:#fff}
+  .opt.primary{background:var(--accent);color:#fff}
+  .opt.primary:hover{background:var(--accentDark)}
+
+  /* ---- Attachment chips ---- */
+  .chips{display:flex;flex-wrap:wrap;gap:7px;width:100%;margin-bottom:2px}
+  .chip{display:inline-flex;align-items:center;gap:7px;background:var(--bot);color:var(--botTxt);
+        border:1px solid var(--line);border-radius:10px;padding:6px 8px 6px 10px;font-size:12.5px;max-width:100%}
+  .chip .nm{max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .chip .sz{color:var(--faint);font-size:11px}
+  .chip .x{background:transparent;border:none;color:var(--faint);cursor:pointer;font-size:16px;
+           line-height:1;padding:0 2px;border-radius:6px;font-family:inherit}
+  .chip .x:hover{color:var(--warn)}
+
+  /* ---- Reassurance bar ---- */
+  .reassure{display:flex;align-items:center;gap:6px;justify-content:center;font-size:11.5px;
+            color:var(--muted);padding:6px 12px;border-top:1px solid var(--line);background:var(--accentTint)}
+  .reassure svg{width:13px;height:13px;color:var(--accent);flex-shrink:0}
+
+  /* ---- Input bar ---- */
+  .inputbar{display:flex;gap:8px;padding:12px;background:var(--panel);align-items:flex-end}
+  .back{background:transparent;border:none;padding:0;width:40px;height:44px;cursor:pointer;flex-shrink:0;
+        display:flex;align-items:center;justify-content:center;color:var(--accent);border-radius:12px}
+  .back:hover{background:var(--accentTint)}
+  .inputbar textarea{flex:1;resize:none;background:var(--bot);border:1.5px solid var(--line);
+       color:var(--txt);border-radius:12px;padding:11px 12px;font-size:14.5px;font-family:inherit;
+       height:44px;max-height:120px;line-height:1.4}
+  .inputbar textarea::placeholder{color:var(--faint)}
   .inputbar textarea:focus{outline:none;border-color:var(--accent)}
-  .send{background:var(--accent);border:none;color:#ffffff;border-radius:12px;width:48px;
-        font-size:18px;cursor:pointer;font-weight:700}
+  .send{background:var(--accent);border:none;color:#fff;border-radius:12px;width:48px;height:44px;
+        cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .send:hover{background:var(--accentDark)}
   .send:disabled{opacity:.4;cursor:not-allowed}
-  .back{background:transparent;border:none;padding:0;width:42px;cursor:pointer;flex-shrink:0;
-        align-items:center;justify-content:center}
-  .back svg{width:32px;height:32px;display:block;transition:transform .12s}
-  .back:hover svg{transform:scale(1.08)}
-  .summary{background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:14px;font-size:13px}
+
+  /* ---- Footer ---- */
+  .footnote{font-size:10.5px;color:var(--faint);text-align:center;
+            padding:7px 14px calc(9px + env(safe-area-inset-bottom));
+            line-height:1.45;background:var(--panel);border-top:1px solid var(--line)}
+
+  /* ---- Summary card ---- */
+  .summary{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:14px;font-size:13px}
   .summary h4{margin:0 0 10px;color:var(--accent);font-size:13px}
   .summary table{width:100%;border-collapse:collapse}
   .summary td{padding:6px 4px;border-bottom:1px solid var(--line);vertical-align:top}
   .summary td.k{color:var(--muted);width:36%;white-space:nowrap}
-  .footnote{font-size:11px;color:var(--muted);text-align:center;padding:6px 0}
+
+  /* ---- Focus visibility (a11y) ---- */
+  :focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:6px}
+
+  /* ---- Reduced motion ---- */
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:.001s !important;transition-duration:.001s !important}
+    .chat{scroll-behavior:auto}
+  }
+
+  /* ---- Mobile: full-screen ---- */
+  @media (max-width:520px){
+    body{padding:0}
+    .app{max-width:none;height:100dvh;max-height:none;border:none;border-radius:0}
+  }
 </style>
 </head>
 <body>
@@ -72,31 +182,46 @@
         <h1 id="hTitle"></h1>
         <p id="hSub"></p>
       </div>
-      <span class="badge" id="hBadge"></span>
+      <span class="badge" id="hBadge">
+        <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" aria-hidden="true"><path d="M12 1 3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+        <span id="hBadgeTxt"></span>
+      </span>
     </div>
-    <div class="langbar" id="langbar"></div>
+    <div class="langbar" id="langbar" role="group" aria-label="Language"></div>
   </header>
-  <div class="chat" id="chat"></div>
+
+  <div class="progress" aria-hidden="true"><div class="fill" id="progressFill"></div></div>
+
+  <!-- Intro / landing -->
+  <div class="intro" id="intro" role="dialog" aria-labelledby="introTitle">
+    <svg class="shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+      <path d="M12 3 4 6v6c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V6l-8-3z"/>
+      <path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <h2 id="introTitle"></h2>
+    <p class="lead" id="introLead"></p>
+    <ul id="introPoints"></ul>
+    <button class="startBtn" id="startBtn"></button>
+    <button class="startBtn secondary" id="askBtn"></button>
+    <p class="law" id="introLaw"></p>
+  </div>
+
+  <div class="chat" id="chat" role="log" aria-live="polite" aria-atomic="false"></div>
   <div class="opts" id="opts"></div>
+
+  <div class="reassure" id="reassure">
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1 3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+    <span id="reassureTxt"></span>
+  </div>
+
   <div class="inputbar" id="inputbar">
-    <button class="back" id="back" title="뒤로" style="display:none">
-      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="bkg" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#cfe0f4"/>
-            <stop offset="0.5" stop-color="#4a93d4"/>
-            <stop offset="0.5" stop-color="#1f6cbf"/>
-            <stop offset="1" stop-color="#56c6f5"/>
-          </linearGradient>
-        </defs>
-        <circle cx="50" cy="50" r="47" fill="#001a8c"/>
-        <circle cx="50" cy="50" r="42" fill="url(#bkg)"/>
-        <ellipse cx="50" cy="33" rx="37" ry="21" fill="#ffffff" opacity="0.18"/>
-        <path d="M30 50 L49 31 L49 42 L72 42 L72 58 L49 58 L49 69 Z" fill="#ffffff" stroke="#9aa3ad" stroke-width="1.3" stroke-linejoin="round"/>
-      </svg>
+    <button class="back" id="back" style="display:none">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
     </button>
     <textarea id="text" rows="1"></textarea>
-    <button class="send" id="send">➤</button>
+    <button class="send" id="send">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+    </button>
   </div>
   <div class="footnote" id="hFoot"></div>
 </div>
@@ -119,9 +244,20 @@ const CONFIG = {
 /* ===================== 다국어 문구 ===================== */
 const LANG = {
   ko:{ name:"한국어", flag:"한국어",
-    title:"에스원 윤리·감사 제보 채널", sub:"경영진단 / 내부 윤리제보 접수", badge:"🔒 비밀보장",
-    foot:"",
+    title:"에스원 윤리·감사 제보 채널", sub:"경영진단 / 내부 윤리제보 접수", badge:"비밀보장",
+    foot:"본 채널은 공익신고자 보호법 및 사내 윤리규정에 따라 운영됩니다.",
+    introTitle:"안심하고 제보하세요", introLead:"",
+    introPoints:["제보자의 신원은 철저히 보호됩니다","대화 내용은 경영진단팀에만\n전달됩니다","익명으로도 끝까지 제보를 완료할 수 있습니다"],
+    startBtn:"제보 시작하기",
+    askBtn:"무엇이든 물어보기",
+    qaGreeting:"윤리·제보와 관련해 궁금한 점을 물어보세요. 예) 익명으로 제보해도 정말 신원이 보호되나요?",
+    qaThinking:"답변을 찾고 있어요...",
+    qaError:"답변을 가져오지 못했습니다. 잠시 후 다시 시도해 주세요.",
+    qaToReport:"제보하기",
+    introLaw:"제출된 정보는 조사 목적으로만 사용되며,\n안전하게 관리됩니다.",
+    reassure:"대화 내용과 신원은 안전하게 보호됩니다",
     inputOn:"여기에 입력하세요...", inputOff:"위 버튼을 선택하세요",
+    sendAria:"전송", backAria:"이전 단계로", typingAria:"입력 중", removeAria:"첨부 삭제",
     greeting:"안녕하세요, 에스원 윤리·감사 제보 채널입니다. 접수된 내용은 경영진단팀에 직접 전달되며, 제보자 신원은 철저히 보호됩니다.\n\n먼저, 어떤 방식으로 제보하시겠어요?",
     anonOpts:["익명으로 제보","실명으로 제보"],
     qCategory:"제보 유형을 선택해 주세요.",
@@ -133,26 +269,38 @@ const LANG = {
     qEvidence:"관련 증빙 자료(문서, 사진, 메일, 녹취 등)를 보유하고 계신가요?",
     evidenceOpts:["있음 - 제출 가능","있음 - 제출 어려움","없음"],
     qAttach:"증빙 파일을 첨부해 주세요. (여러 개 가능, 파일당 10MB 이하)\n다 되었으면 '다음'을 누르세요.",
-    attachPick:"📎 파일 선택", attachNext:"다음 →",
-    attachAdded:"'{n}' 첨부됨", attachTooBig:"'{n}'은(는) 10MB를 초과해 제외했습니다.", attachNone:"없음",
+    attachPick:"파일 선택", attachNext:"다음 →",
+    attachTooBig:"'{n}'은(는) 10MB를 초과해 제외했습니다.", attachNone:"없음",
     qName:"실명 제보를 선택하셨습니다. 제보자 성명을 입력해 주세요.",
     qContact:"추가 확인이 필요할 수 있습니다. 연락 가능한 이메일 또는 전화번호를 남겨주세요.",
-    sumTitle:"📋 제보 내용 확인",
+    sumTitle:"제보 내용 확인",
     L:{anon:"제보 방식",category:"제보 유형",when:"발생 시기",dept:"부서/장소",who:"관련 인물",evidence:"증빙 자료",files:"첨부파일",name:"성명",contact:"연락처",detail:"상세 내용"},
     qConfirm:"위 내용으로 제보를 접수할까요?",
-    confirmOpts:["✅ 제보 접수","✏️ 처음부터 다시"],
+    confirmOpts:["제보 접수","처음부터 다시"],
     sending:"제보를 전송 중입니다...",
     success:"제보가 정상적으로 접수되었습니다.",
     doneTpl:"소중한 제보에 감사드립니다.\n\n{extra}",
-    mailtoExtra:"⚠️ 아직 자동발송이 설정되지 않아 메일앱이 열렸습니다. '보내기'를 눌러 제출을 완료해 주세요.",
+    mailtoExtra:"메일앱이 열렸습니다. '보내기'를 눌러 제출을 완료해 주세요.",
     errHttp:"전송에 실패했습니다. 잠시 후 다시 시도하거나 관리자에게 문의해 주세요. (HTTP {s})",
     errNet:"네트워크 오류로 전송하지 못했습니다. 연결 상태를 확인 후 다시 시도해 주세요.",
+    retry:"다시 시도",
     anonContact:"(익명 제보)" },
 
   en:{ name:"English", flag:"EN",
-    title:"에스원 Ethics & Audit Report Channel", sub:"Internal whistleblowing intake", badge:"🔒 Confidential",
-    foot:"",
+    title:"S-1 Ethics & Audit Report Channel", sub:"Internal whistleblowing intake", badge:"Confidential",
+    foot:"This channel operates under whistleblower protection laws and the internal code of ethics.",
+    introTitle:"Report with confidence", introLead:"",
+    introPoints:["Your identity is strictly protected","Your conversation is seen only by the Audit team","You can complete the entire report anonymously"],
+    startBtn:"Start a report",
+    askBtn:"Ask a question",
+    qaGreeting:"Ask anything about ethics reporting. e.g., If I report anonymously, is my identity really protected?",
+    qaThinking:"Finding an answer...",
+    qaError:"Couldn't get an answer. Please try again in a moment.",
+    qaToReport:"File a report",
+    introLaw:"Information submitted is used only for investigation and is kept secure.",
+    reassure:"Your conversation and identity are kept protected",
     inputOn:"Type here...", inputOff:"Please choose an option above",
+    sendAria:"Send", backAria:"Previous step", typingAria:"Typing", removeAria:"Remove attachment",
     greeting:"Hello, this is the S-1 Ethics & Audit reporting channel. Your report goes directly to the Management Audit team, and your identity is strictly protected.\n\nFirst, how would you like to report?",
     anonOpts:["Report anonymously","Report with my name"],
     qCategory:"Please select the type of report.",
@@ -164,26 +312,38 @@ const LANG = {
     qEvidence:"Do you have any supporting evidence (documents, photos, emails, recordings)?",
     evidenceOpts:["Yes - can submit","Yes - hard to submit","None"],
     qAttach:"Please attach your evidence files (multiple allowed, up to 10MB each).\nTap 'Next' when done.",
-    attachPick:"📎 Choose file", attachNext:"Next →",
-    attachAdded:"'{n}' attached", attachTooBig:"'{n}' exceeds 10MB and was skipped.", attachNone:"None",
+    attachPick:"Choose file", attachNext:"Next →",
+    attachTooBig:"'{n}' exceeds 10MB and was skipped.", attachNone:"None",
     qName:"You chose to report with your name. Please enter your full name.",
     qContact:"We may need to follow up. Please leave an email or phone number we can reach you at.",
-    sumTitle:"📋 Review your report",
+    sumTitle:"Review your report",
     L:{anon:"Method",category:"Type",when:"When",dept:"Dept/Location",who:"People involved",evidence:"Evidence",files:"Attachments",name:"Name",contact:"Contact",detail:"Details"},
     qConfirm:"Shall I submit this report?",
-    confirmOpts:["✅ Submit","✏️ Start over"],
+    confirmOpts:["Submit","Start over"],
     sending:"Submitting your report...",
     success:"Your report has been submitted successfully.",
     doneTpl:"Thank you for your report.\n\n{extra}",
-    mailtoExtra:"⚠️ Auto-send is not configured yet, so your mail app opened. Press 'Send' to complete submission.",
+    mailtoExtra:"Your mail app opened. Press 'Send' to complete submission.",
     errHttp:"Submission failed. Please try again later or contact the administrator. (HTTP {s})",
     errNet:"Network error, could not submit. Check your connection and try again.",
+    retry:"Try again",
     anonContact:"(anonymous report)" },
 
   zh:{ name:"中文", flag:"中文",
-    title:"에스원 道德与审计举报通道", sub:"内部举报受理", badge:"🔒 保密",
-    foot:"",
+    title:"S-1 道德与审计举报通道", sub:"内部举报受理", badge:"保密",
+    foot:"本通道依据举报人保护相关法律及公司道德规范运营。",
+    introTitle:"请放心举报", introLead:"",
+    introPoints:["举报人身份受到严格保护","对话内容仅经营诊断团队可见","您可全程匿名完成举报"],
+    startBtn:"开始举报",
+    askBtn:"我要咨询",
+    qaGreeting:"有关道德与举报的问题都可以问我。例如：匿名举报真的能保护我的身份吗？",
+    qaThinking:"正在查找答案...",
+    qaError:"未能获取答案，请稍后再试。",
+    qaToReport:"我要举报",
+    introLaw:"所提交的信息仅用于调查目的，并妥善保管。",
+    reassure:"对话内容与您的身份将受到保护",
     inputOn:"在此输入...", inputOff:"请选择上方选项",
+    sendAria:"发送", backAria:"上一步", typingAria:"正在输入", removeAria:"删除附件",
     greeting:"您好，这里是S-1道德与审计举报通道。您的举报将直接转交经营诊断团队，举报人身份将受到严格保护。\n\n首先，您希望以哪种方式举报？",
     anonOpts:["匿名举报","实名举报"],
     qCategory:"请选择举报类型。",
@@ -195,26 +355,38 @@ const LANG = {
     qEvidence:"您是否持有相关证据（文件、照片、邮件、录音）？",
     evidenceOpts:["有 - 可提交","有 - 难以提交","无"],
     qAttach:"请上传证据文件（可多个，每个不超过10MB）。\n完成后请点击'下一步'。",
-    attachPick:"📎 选择文件", attachNext:"下一步 →",
-    attachAdded:"已添加 '{n}'", attachTooBig:"'{n}' 超过10MB，已跳过。", attachNone:"无",
+    attachPick:"选择文件", attachNext:"下一步 →",
+    attachTooBig:"'{n}' 超过10MB，已跳过。", attachNone:"无",
     qName:"您选择了实名举报。请输入举报人姓名。",
     qContact:"我们可能需要进一步核实。请留下可联系的邮箱或电话。",
-    sumTitle:"📋 确认举报内容",
+    sumTitle:"确认举报内容",
     L:{anon:"方式",category:"类型",when:"发生时间",dept:"部门/地点",who:"相关人员",evidence:"证据",files:"附件",name:"姓名",contact:"联系方式",detail:"详细内容"},
     qConfirm:"确认提交此举报吗？",
-    confirmOpts:["✅ 提交举报","✏️ 重新开始"],
+    confirmOpts:["提交举报","重新开始"],
     sending:"正在提交举报...",
     success:"您的举报已成功提交。",
     doneTpl:"感谢您的举报。\n\n{extra}",
-    mailtoExtra:"⚠️ 自动发送尚未配置，已打开邮件应用。请点击'发送'完成提交。",
+    mailtoExtra:"已打开邮件应用。请点击'发送'完成提交。",
     errHttp:"提交失败。请稍后重试或联系管理员。(HTTP {s})",
     errNet:"网络错误，无法提交。请检查连接后重试。",
+    retry:"重试",
     anonContact:"（匿名举报）" },
 
   vi:{ name:"Tiếng Việt", flag:"VI",
-    title:"에스원 Kênh báo cáo Đạo đức & Kiểm toán", sub:"Tiếp nhận tố giác nội bộ", badge:"🔒 Bảo mật",
-    foot:"",
+    title:"Kênh báo cáo Đạo đức & Kiểm toán S-1", sub:"Tiếp nhận tố giác nội bộ", badge:"Bảo mật",
+    foot:"Kênh này hoạt động theo luật bảo vệ người tố giác và quy tắc đạo đức nội bộ.",
+    introTitle:"Yên tâm báo cáo", introLead:"",
+    introPoints:["Danh tính của bạn được bảo vệ nghiêm ngặt","Nội dung chỉ bộ phận Kiểm toán xem được","Bạn có thể hoàn tất báo cáo hoàn toàn ẩn danh"],
+    startBtn:"Bắt đầu báo cáo",
+    askBtn:"Đặt câu hỏi",
+    qaGreeting:"Hãy hỏi bất cứ điều gì về đạo đức & tố giác. Vd: Nếu báo cáo ẩn danh, danh tính của tôi có thực sự được bảo vệ không?",
+    qaThinking:"Đang tìm câu trả lời...",
+    qaError:"Không lấy được câu trả lời. Vui lòng thử lại sau.",
+    qaToReport:"Gửi báo cáo",
+    introLaw:"Thông tin gửi đi chỉ dùng cho mục đích điều tra và được bảo mật an toàn.",
+    reassure:"Nội dung trò chuyện và danh tính của bạn được bảo vệ",
     inputOn:"Nhập tại đây...", inputOff:"Vui lòng chọn một mục ở trên",
+    sendAria:"Gửi", backAria:"Bước trước", typingAria:"Đang nhập", removeAria:"Xóa tệp đính kèm",
     greeting:"Xin chào, đây là kênh báo cáo Đạo đức & Kiểm toán của S-1. Báo cáo của bạn được gửi trực tiếp đến bộ phận Kiểm toán Quản lý, và danh tính của bạn được bảo vệ nghiêm ngặt.\n\nTrước tiên, bạn muốn báo cáo theo cách nào?",
     anonOpts:["Báo cáo ẩn danh","Báo cáo nêu tên"],
     qCategory:"Vui lòng chọn loại báo cáo.",
@@ -226,20 +398,21 @@ const LANG = {
     qEvidence:"Bạn có bằng chứng nào không (tài liệu, ảnh, email, ghi âm)?",
     evidenceOpts:["Có - có thể nộp","Có - khó nộp","Không có"],
     qAttach:"Vui lòng đính kèm tệp bằng chứng (nhiều tệp, mỗi tệp tối đa 10MB).\nNhấn 'Tiếp tục' khi xong.",
-    attachPick:"📎 Chọn tệp", attachNext:"Tiếp tục →",
-    attachAdded:"Đã đính kèm '{n}'", attachTooBig:"'{n}' vượt quá 10MB nên bị bỏ qua.", attachNone:"Không có",
+    attachPick:"Chọn tệp", attachNext:"Tiếp tục →",
+    attachTooBig:"'{n}' vượt quá 10MB nên bị bỏ qua.", attachNone:"Không có",
     qName:"Bạn đã chọn báo cáo nêu tên. Vui lòng nhập họ tên của bạn.",
     qContact:"Chúng tôi có thể cần liên hệ thêm. Vui lòng để lại email hoặc số điện thoại.",
-    sumTitle:"📋 Xác nhận báo cáo",
+    sumTitle:"Xác nhận báo cáo",
     L:{anon:"Hình thức",category:"Loại",when:"Thời gian",dept:"Bộ phận/Địa điểm",who:"Người liên quan",evidence:"Bằng chứng",files:"Tệp đính kèm",name:"Họ tên",contact:"Liên hệ",detail:"Chi tiết"},
     qConfirm:"Tôi gửi báo cáo này nhé?",
-    confirmOpts:["✅ Gửi báo cáo","✏️ Làm lại từ đầu"],
+    confirmOpts:["Gửi báo cáo","Làm lại từ đầu"],
     sending:"Đang gửi báo cáo...",
     success:"Báo cáo của bạn đã được gửi thành công.",
     doneTpl:"Cảm ơn bạn đã báo cáo.\n\n{extra}",
-    mailtoExtra:"⚠️ Chức năng tự động gửi chưa được cấu hình nên ứng dụng email đã mở. Nhấn 'Gửi' để hoàn tất.",
+    mailtoExtra:"Ứng dụng email đã mở. Nhấn 'Gửi' để hoàn tất.",
     errHttp:"Gửi thất bại. Vui lòng thử lại sau hoặc liên hệ quản trị viên. (HTTP {s})",
     errNet:"Lỗi mạng, không thể gửi. Kiểm tra kết nối và thử lại.",
+    retry:"Thử lại",
     anonContact:"(to giac an danh)" }
 };
 const LANG_ORDER = ["ko","en","zh","vi"];
@@ -247,24 +420,46 @@ const LANG_ORDER = ["ko","en","zh","vi"];
 
 const chat=document.getElementById('chat'), optsEl=document.getElementById('opts');
 const textEl=document.getElementById('text'), sendBtn=document.getElementById('send');
-const backBtn=document.getElementById('back');
+const backBtn=document.getElementById('back'), progressFill=document.getElementById('progressFill');
+const introEl=document.getElementById('intro'), startBtn=document.getElementById('startBtn'), askBtn=document.getElementById('askBtn');
+const REDUCE = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 let lang="ko", T=LANG.ko;
 const data={anonIdx:-1, categoryIdx:-1, evidenceIdx:-1, when:"", dept:"", who:"", detail:"", name:"", contact:"", files:[]};
-let step=0, pending=null, minLen=1, stepHistory=[], finished=false;
+let step=0, pending=null, minLen=1, stepHistory=[], finished=false, started=false, mode="report";
+
+const BOT_AV='<div class="av"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="8" r="4.2"/><path d="M3.6 20.6c0-4.7 3.8-8.2 8.4-8.2s8.4 3.5 8.4 8.2z"/></svg></div>';
+const USER_AV=BOT_AV;
 
 function applyChrome(){
   document.documentElement.lang = lang;
   document.getElementById('hTitle').textContent=T.title;
   document.getElementById('hSub').textContent=T.sub;
-  document.getElementById('hBadge').textContent=T.badge;
+  document.getElementById('hBadgeTxt').textContent=T.badge;
   document.getElementById('hFoot').textContent=T.foot;
+  document.getElementById('reassureTxt').textContent=T.reassure;
+  document.getElementById('introTitle').textContent=T.introTitle;
+  const leadEl=document.getElementById('introLead');
+  leadEl.textContent=T.introLead; leadEl.style.display=T.introLead?'':'none';
+  document.getElementById('introLaw').textContent=T.introLaw;
+  startBtn.textContent=T.startBtn;
+  askBtn.textContent=T.askBtn;
+  sendBtn.setAttribute('aria-label',T.sendAria);
+  backBtn.setAttribute('aria-label',T.backAria);
+  const ul=document.getElementById('introPoints'); ul.innerHTML='';
+  T.introPoints.forEach(p=>{
+    const li=document.createElement('li');
+    li.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span></span>';
+    li.querySelector('span').textContent=p;
+    ul.appendChild(li);
+  });
 }
 function buildLangBar(){
   const bar=document.getElementById('langbar'); bar.innerHTML='';
   LANG_ORDER.forEach(code=>{
     const b=document.createElement('button');
     b.className='lang'+(code===lang?' active':''); b.textContent=LANG[code].flag;
+    b.setAttribute('aria-pressed', code===lang?'true':'false');
     b.onclick=()=>{ if(code!==lang) setLang(code); };
     bar.appendChild(b);
   });
@@ -272,21 +467,22 @@ function buildLangBar(){
 function setLang(code){
   lang=code; T=LANG[code];
   applyChrome(); buildLangBar();
-  if(finished) return;                 // 제출 후에는 대화 기록 그대로 유지
+  if(!started || finished) return;
+  if(mode==="qa") return;                 // 문의 모드는 대화 그대로 유지
   if(data.anonIdx===0) data.contact=T.anonContact;
-  rerender();                          // 입력값 보존하며 새 언어로 다시 그림
+  rerender();
 }
 
 function botSay(content,isNode){
   const row=document.createElement('div'); row.className='row';
-  row.innerHTML='<div class="av"><svg viewBox="0 0 24 24" width="16" height="16" fill="#7c8aa0"><circle cx="12" cy="8" r="4.2"/><path d="M3.6 20.6c0-4.7 3.8-8.2 8.4-8.2s8.4 3.5 8.4 8.2z"/></svg></div><div class="bubble"></div>';
+  row.innerHTML=BOT_AV+'<div class="bubble"></div>';
   if(isNode) row.querySelector('.bubble').appendChild(content);
   else row.querySelector('.bubble').textContent=content;
-  chat.appendChild(row); scroll();
+  chat.appendChild(row); scroll(); return row;
 }
 function userSay(text){
   const row=document.createElement('div'); row.className='row user';
-  row.innerHTML='<div class="av">🙋</div><div class="bubble"></div>';
+  row.innerHTML=USER_AV+'<div class="bubble"></div>';
   row.querySelector('.bubble').textContent=text;
   chat.appendChild(row); scroll();
 }
@@ -306,6 +502,15 @@ function setInput(on){
 function scroll(){ setTimeout(()=>chat.scrollTop=chat.scrollHeight,30); }
 function expect(cb,min){ pending=cb; minLen=min||1; }
 
+/* typing indicator then run */
+function withTyping(fn){
+  if(REDUCE){ fn(); return; }
+  const row=document.createElement('div'); row.className='row';
+  row.innerHTML=BOT_AV+'<div class="bubble typing" aria-label="'+T.typingAria+'"><span></span><span></span><span></span></div>';
+  chat.appendChild(row); scroll();
+  setTimeout(()=>{ row.remove(); fn(); }, 520);
+}
+
 const flow=[
   ()=>{ botSay(T.greeting); setInput(false);
         options(T.anonOpts,(v,i)=>{ userSay(v); data.anonIdx=i; next(); }); },
@@ -324,9 +529,13 @@ const flow=[
         else { data.contact=T.anonContact; next(); } },
   ()=>{ showSummary(); }
 ];
-function runStep(){ stepHistory.push({step:step, chatLen:chat.children.length}); flow[step](); updateBack(); }
-function next(){ step++; runStep(); }
-function updateBack(){ backBtn.style.display=(!finished && stepHistory.length>1)?'flex':'none'; }
+function updateProgress(){
+  const pct = finished ? 100 : Math.min(100, Math.round(step/(flow.length-1)*100));
+  progressFill.style.width = pct + "%";
+}
+function runStep(){ stepHistory.push({step:step, chatLen:chat.children.length}); flow[step](); updateBack(); updateProgress(); }
+function next(){ step++; withTyping(runStep); }
+function updateBack(){ backBtn.style.display=(!finished && started && stepHistory.length>1)?'flex':'none'; }
 
 function clearStepData(s){
   if(s===0)data.anonIdx=-1; else if(s===1)data.categoryIdx=-1; else if(s===2)data.when="";
@@ -348,7 +557,6 @@ function goBack(){
   optsEl.innerHTML=''; clearStepData(prev.step); step=prev.step; runStep();
 }
 
-// 언어 전환 시: 완료된 질문/답변을 새 언어로 다시 그림 (입력값 보존)
 function completedQA(s){
   if(s===0) return {q:T.greeting, a:T.anonOpts[data.anonIdx]};
   if(s===1) return {q:T.qCategory, a:T.categories[data.categoryIdx]};
@@ -372,24 +580,40 @@ function rerender(){
   runStep();
 }
 
+/* ---- Attachments with chips ---- */
+function fmtSize(b){ if(b<1024)return b+" B"; if(b<1048576)return (b/1024).toFixed(0)+" KB"; return (b/1048576).toFixed(1)+" MB"; }
 function attachStep(){
   botSay(T.qAttach); setInput(false); optsEl.innerHTML='';
+  const chips=document.createElement('div'); chips.className='chips'; chips.id='chips';
   const inp=document.createElement('input'); inp.type='file'; inp.multiple=true; inp.style.display='none';
-  const pick=document.createElement('button'); pick.className='opt'; pick.textContent=T.attachPick;
+  const pick=document.createElement('button'); pick.className='opt'; pick.textContent="📎 "+T.attachPick;
   pick.onclick=()=>inp.click();
-  const done=document.createElement('button'); done.className='opt'; done.textContent=T.attachNext;
+  const done=document.createElement('button'); done.className='opt primary'; done.textContent=T.attachNext;
   done.onclick=()=>{ optsEl.innerHTML=''; next(); };
-  inp.onchange=()=>readFiles(inp.files);
-  optsEl.appendChild(pick); optsEl.appendChild(done); optsEl.appendChild(inp);
+  inp.onchange=()=>readFiles(inp.files, chips);
+  optsEl.appendChild(chips); optsEl.appendChild(pick); optsEl.appendChild(done); optsEl.appendChild(inp);
+  renderChips(chips);
 }
-function readFiles(fileList){
+function renderChips(chips){
+  chips.innerHTML='';
+  data.files.forEach((f,idx)=>{
+    const chip=document.createElement('span'); chip.className='chip';
+    chip.innerHTML='<span class="nm"></span><span class="sz">'+fmtSize(f.size||0)+'</span>';
+    chip.querySelector('.nm').textContent=f.name;
+    const x=document.createElement('button'); x.className='x'; x.textContent='×';
+    x.setAttribute('aria-label',T.removeAria+': '+f.name);
+    x.onclick=()=>{ data.files.splice(idx,1); renderChips(chips); };
+    chip.appendChild(x); chips.appendChild(chip);
+  });
+}
+function readFiles(fileList, chips){
   Array.from(fileList).forEach(file=>{
     if(file.size > CONFIG.MAX_FILE_MB*1024*1024){ botSay(T.attachTooBig.replace('{n}',file.name)); return; }
     const reader=new FileReader();
     reader.onload=()=>{
       const b64=String(reader.result).split(',')[1];
-      data.files.push({name:file.name, mimeType:file.type||'application/octet-stream', data:b64});
-      botSay(T.attachAdded.replace('{n}',file.name));
+      data.files.push({name:file.name, size:file.size, mimeType:file.type||'application/octet-stream', data:b64});
+      renderChips(chips);
     };
     reader.readAsDataURL(file);
   });
@@ -458,7 +682,7 @@ function buildBody(){
 }
 
 function deliver(){
-  finished=true; updateBack();
+  finished=true; updateBack(); updateProgress();
   const msg=buildBody(), cfg=CONFIG.EMAILJS;
   if(CONFIG.APPSCRIPT_ENDPOINT) sendViaAppsScript(msg);
   else if(CONFIG.FORMSPREE_ENDPOINT) sendViaFormspree(msg);
@@ -468,40 +692,89 @@ function deliver(){
     doneMessage(msg.ref,T.mailtoExtra);
   }
 }
+function sendingBubble(txt){
+  const node=document.createElement('span'); node.className='sending';
+  node.innerHTML='<span class="spinner" aria-hidden="true"></span>';
+  const t=document.createElement('span'); t.textContent=txt||T.sending; node.appendChild(t);
+  return botSay(node,true);
+}
+function failRetry(text){
+  botSay(text);
+  options([T.retry],()=>{ deliver(); });
+}
 function sendViaAppsScript(msg){
-  botSay(T.sending);
+  const s=sendingBubble();
   fetch(CONFIG.APPSCRIPT_ENDPOINT,{
     method:"POST", mode:"no-cors",
     headers:{"Content-Type":"text/plain;charset=utf-8"},
     body:JSON.stringify({ subject:msg.subject, body:msg.body, files:data.files, fields:msg.fields })
-  }).then(()=>doneMessage(msg.ref,T.success))
-    .catch(()=>botSay(T.errNet));
+  }).then(()=>{ if(s)s.remove(); doneMessage(msg.ref,T.success); })
+    .catch(()=>{ if(s)s.remove(); failRetry(T.errNet); });
 }
 function sendViaFormspree(msg){
-  botSay(T.sending);
+  const s=sendingBubble();
   fetch(CONFIG.FORMSPREE_ENDPOINT,{
     method:"POST", headers:{"Content-Type":"application/json","Accept":"application/json"},
     body:JSON.stringify({ _subject:msg.subject, ref:msg.ref, report:msg.body })
-  }).then(r=>{ if(r.ok) doneMessage(msg.ref,T.success); else botSay(T.errHttp.replace('{s}',r.status)); })
-    .catch(()=>botSay(T.errNet));
+  }).then(r=>{ if(s)s.remove(); if(r.ok) doneMessage(msg.ref,T.success); else failRetry(T.errHttp.replace('{s}',r.status)); })
+    .catch(()=>{ if(s)s.remove(); failRetry(T.errNet); });
 }
 function sendViaEmailJS(msg){
-  botSay(T.sending);
-  const s=document.createElement('script');
-  s.src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js";
-  s.onload=()=>{ emailjs.init({publicKey:CONFIG.EMAILJS.PUBLIC_KEY});
+  const s=sendingBubble();
+  const sc=document.createElement('script');
+  sc.src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js";
+  sc.onload=()=>{ emailjs.init({publicKey:CONFIG.EMAILJS.PUBLIC_KEY});
     emailjs.send(CONFIG.EMAILJS.SERVICE_ID,CONFIG.EMAILJS.TEMPLATE_ID,{
       subject:msg.subject, body:msg.body, reply_to:(data.contact.indexOf("@")>=0?data.contact:CONFIG.RECIPIENT_EMAIL)
-    }).then(()=>doneMessage(msg.ref,T.success)).catch(err=>botSay(T.errHttp.replace('{s}',(err&&err.text)||'')));
+    }).then(()=>{ if(s)s.remove(); doneMessage(msg.ref,T.success); })
+      .catch(err=>{ if(s)s.remove(); failRetry(T.errHttp.replace('{s}',(err&&err.text)||'')); });
   };
-  s.onerror=()=>botSay(T.errNet);
-  document.body.appendChild(s);
+  sc.onerror=()=>{ if(s)s.remove(); failRetry(T.errNet); };
+  document.body.appendChild(sc);
 }
 function doneMessage(ref,extra){ botSay(T.doneTpl.replace('{ref}',ref).replace('{extra}',extra)); }
 function esc(s){ return (s||'').replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];}); }
 
+function startChat(){
+  if(started) return; started=true; mode="report";
+  introEl.style.display='none';
+  withTyping(runStep);
+}
+
+/* ---- 문의(Q&A) 모드 ---- */
+function startQA(){
+  if(started) return; started=true; mode="qa";
+  introEl.style.display='none';
+  progressFill.style.width="0%";
+  withTyping(function(){ botSay(T.qaGreeting); qaReady(); });
+}
+function qaReady(){
+  setInput(true); expect(qaAsk, 2);
+  options([T.qaToReport], function(){ switchToReport(); });
+}
+function qaAsk(q){
+  const s=sendingBubble(T.qaThinking);
+  fetch(CONFIG.APPSCRIPT_ENDPOINT, {
+    method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"},
+    body: JSON.stringify({ action:"qa", question:q, lang:T.name })
+  }).then(function(r){ return r.json(); })
+    .then(function(d){ if(s)s.remove(); botSay((d&&d.answer)?d.answer:T.qaError); qaReady(); })
+    .catch(function(){ if(s)s.remove(); botSay(T.qaError); qaReady(); });
+}
+function resetData(){
+  data.anonIdx=-1; data.categoryIdx=-1; data.evidenceIdx=-1;
+  data.when=""; data.dept=""; data.who=""; data.detail=""; data.name=""; data.contact=""; data.files=[];
+}
+function switchToReport(){
+  mode="report"; finished=false; step=0; pending=null; stepHistory=[];
+  chat.innerHTML=''; optsEl.innerHTML=''; resetData();
+  withTyping(runStep);
+}
+
+startBtn.onclick=startChat;
+askBtn.onclick=startQA;
 backBtn.onclick=goBack;
-applyChrome(); buildLangBar(); runStep();
+applyChrome(); buildLangBar(); updateProgress();
 </script>
 </body>
 </html>
