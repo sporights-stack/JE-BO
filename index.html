@@ -291,7 +291,8 @@ const LANG = {
     confirmOpts:["제보 접수","처음부터 다시"],
     sending:"제보를 전송 중입니다...",
     success:"제보가 정상적으로 접수되었습니다.",
-    doneTpl:"소중한 제보에 감사드립니다.\n\n{extra}\n\n접수번호: {ref}\n※ 진행 상황 문의 시 이 번호를 알려주세요. 화면을 닫으면 다시 확인할 수 없으니 따로 적어두시기 바랍니다.",
+    doneTpl:"소중한 제보에 감사드립니다.\n\n{extra}",
+    refNote:"\n\n접수번호: {ref}\n※ 진행 상황 문의 시 이 번호를 알려주세요. 화면을 닫으면 다시 확인할 수 없으니 따로 적어두시기 바랍니다.",
     mailtoExtra:"메일앱이 열렸습니다. '보내기'를 눌러 제출을 완료해 주세요.",
     errHttp:"전송에 실패했습니다. 잠시 후 다시 시도하거나 관리자에게 문의해 주세요. (HTTP {s})",
     errNet:"네트워크 오류로 전송하지 못했습니다. 연결 상태를 확인 후 다시 시도해 주세요.",
@@ -339,7 +340,8 @@ const LANG = {
     confirmOpts:["Submit","Start over"],
     sending:"Submitting your report...",
     success:"Your report has been submitted successfully.",
-    doneTpl:"Thank you for your report.\n\n{extra}\n\nReference number: {ref}\n※ Please quote this number when following up. It cannot be retrieved once you close this screen, so please make a note of it.",
+    doneTpl:"Thank you for your report.\n\n{extra}",
+    refNote:"\n\nReference number: {ref}\n※ Please quote this number when following up. It cannot be retrieved once you close this screen, so please make a note of it.",
     mailtoExtra:"Your mail app opened. Press 'Send' to complete submission.",
     errHttp:"Submission failed. Please try again later or contact the administrator. (HTTP {s})",
     errNet:"Network error, could not submit. Check your connection and try again.",
@@ -387,7 +389,8 @@ const LANG = {
     confirmOpts:["提交举报","重新开始"],
     sending:"正在提交举报...",
     success:"您的举报已成功提交。",
-    doneTpl:"感谢您的举报。\n\n{extra}\n\n受理编号：{ref}\n※ 咨询处理进度时请提供此编号。关闭此页面后将无法再次查看，请另行记录。",
+    doneTpl:"感谢您的举报。\n\n{extra}",
+    refNote:"\n\n受理编号：{ref}\n※ 咨询处理进度时请提供此编号。关闭此页面后将无法再次查看，请另行记录。",
     mailtoExtra:"已打开邮件应用。请点击'发送'完成提交。",
     errHttp:"提交失败。请稍后重试或联系管理员。(HTTP {s})",
     errNet:"网络错误，无法提交。请检查连接后重试。",
@@ -435,7 +438,8 @@ const LANG = {
     confirmOpts:["Gửi báo cáo","Làm lại từ đầu"],
     sending:"Đang gửi báo cáo...",
     success:"Báo cáo của bạn đã được gửi thành công.",
-    doneTpl:"Cảm ơn bạn đã báo cáo.\n\n{extra}\n\nMã tiếp nhận: {ref}\n※ Vui lòng cung cấp mã này khi hỏi về tiến độ xử lý. Bạn sẽ không xem lại được sau khi đóng màn hình, hãy ghi lại mã này.",
+    doneTpl:"Cảm ơn bạn đã báo cáo.\n\n{extra}",
+    refNote:"\n\nMã tiếp nhận: {ref}\n※ Vui lòng cung cấp mã này khi hỏi về tiến độ xử lý. Bạn sẽ không xem lại được sau khi đóng màn hình, hãy ghi lại mã này.",
     mailtoExtra:"Ứng dụng email đã mở. Nhấn 'Gửi' để hoàn tất.",
     errHttp:"Gửi thất bại. Vui lòng thử lại sau hoặc liên hệ quản trị viên. (HTTP {s})",
     errNet:"Lỗi mạng, không thể gửi. Kiểm tra kết nối và thử lại.",
@@ -483,7 +487,8 @@ const LANG = {
     confirmOpts:["Hantar laporan","Mula semula"],
     sending:"Sedang menghantar laporan anda...",
     success:"Laporan anda telah berjaya dihantar.",
-    doneTpl:"Terima kasih atas laporan anda.\n\n{extra}\n\nNombor rujukan: {ref}\n※ Sila nyatakan nombor ini apabila bertanya tentang perkembangan kes. Ia tidak boleh disemak semula setelah skrin ditutup, sila catatkan.",
+    doneTpl:"Terima kasih atas laporan anda.\n\n{extra}",
+    refNote:"\n\nNombor rujukan: {ref}\n※ Sila nyatakan nombor ini apabila bertanya tentang perkembangan kes. Ia tidak boleh disemak semula setelah skrin ditutup, sila catatkan.",
     mailtoExtra:"Aplikasi e-mel anda telah dibuka. Tekan 'Hantar' untuk melengkapkan penghantaran.",
     errHttp:"Penghantaran gagal. Sila cuba lagi sebentar nanti atau hubungi pentadbir. (HTTP {s})",
     errNet:"Ralat rangkaian, tidak dapat menghantar. Sila semak sambungan anda dan cuba lagi.",
@@ -893,7 +898,13 @@ function sendViaEmailJS(msg){
   sc.onerror=()=>{ if(s)s.remove(); failRetry(T.errNet); };
   document.body.appendChild(sc);
 }
-function doneMessage(ref,extra){ botSay(T.doneTpl.replace('{ref}',ref).replace('{extra}',extra)); }
+function doneMessage(ref,extra){
+  var txt = T.doneTpl.replace('{extra}',extra);
+  // 접수번호는 서버가 발급한다. 없으면 빈 줄을 남기지 않고, 운영자가 알 수 있게 콘솔에 경고.
+  if(ref) txt += T.refNote.replace('{ref}',ref);
+  else console.warn("[제보] 서버가 접수번호를 반환하지 않았습니다. Code.gs 최신 버전이 배포되었는지 확인하세요.");
+  botSay(txt);
+}
 function esc(s){ return (s||'').replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];}); }
 
 function startChat(){
