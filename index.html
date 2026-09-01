@@ -1,24 +1,1021 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>경영진단팀 업무 현황</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background-color: #f5f5f5;
-            color: #333;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>에스원 윤리·감사 제보 채널 / S-1 Ethics Report</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+  :root{
+    --bg1:#eaf0f8; --bg2:#f6f9fd;
+    --panel:#ffffff; --bot:#eef2f8; --botTxt:#1a2332;
+    --user:#1b50a0; --userTxt:#ffffff;
+    --txt:#16202e; --muted:#4a5666; --faint:#64748b;
+    --accent:#1b50a0; --accentDark:#153f80; --accentTint:rgba(27,80,160,.08);
+    --line:#e2e8f0; --ok:#16a34a; --warn:#d97706;
+    --focus:#2563eb;
+    --shadow:0 16px 44px rgba(27,80,160,.16);
+    --radius:20px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg1:#0d1526; --bg2:#101a30;
+      --panel:#151f33; --bot:#1e2a42; --botTxt:#e6ecf5;
+      --user:#3b82f6; --userTxt:#ffffff;
+      --txt:#e6ecf5; --muted:#a9b6c8; --faint:#8494a8;
+      --accent:#5b9bf0; --accentDark:#4a86d8; --accentTint:rgba(91,155,240,.14);
+      --line:#2a3752; --focus:#8ab4ff;
+      --shadow:0 16px 44px rgba(0,0,0,.5);
+    }
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic","Microsoft YaHei",sans-serif;
+       background:linear-gradient(160deg,var(--bg1),var(--bg2));color:var(--txt);
+       min-height:100dvh;display:flex;justify-content:center;align-items:center;
+       padding:max(16px,env(safe-area-inset-top)) 16px max(16px,env(safe-area-inset-bottom))}
+  .app{width:100%;max-width:480px;height:90dvh;max-height:800px;background:var(--panel);
+       border:1px solid var(--line);border-radius:var(--radius);display:flex;flex-direction:column;
+       overflow:hidden;box-shadow:var(--shadow);position:relative}
+
+  /* ---- Header ---- */
+  header{padding:14px 18px;border-bottom:1px solid var(--line);background:var(--accentTint)}
+  .htop{display:flex;align-items:center;gap:12px}
+  .logo{height:38px;padding:0 12px;border-radius:8px;background:var(--panel);border:2px solid var(--accent);
+        display:flex;align-items:center;justify-content:center;flex-shrink:0;
+        font-weight:800;font-size:18px;color:var(--accent);letter-spacing:.5px}
+  header h1{font-size:16px;margin:0;font-weight:800;color:var(--txt)}
+  header p{margin:2px 0 0;font-size:12.5px;color:var(--muted)}
+  .badge{margin-left:auto;display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--accent);
+         border:1px solid var(--accent);padding:4px 9px;border-radius:20px;background:var(--accentTint);
+         white-space:nowrap;font-weight:600}
+  .langbar{display:flex;gap:6px;margin-top:12px}
+  .lang{font-size:12px;padding:5px 11px;border-radius:14px;border:1px solid var(--line);
+        background:transparent;color:var(--muted);cursor:pointer;transition:.15s;font-family:inherit}
+  .lang:hover{border-color:var(--accent);color:var(--accent)}
+  .lang.active{border-color:var(--accent);color:#fff;background:var(--accent);font-weight:700}
+
+  /* ---- Progress ---- */
+  .progress{height:4px;background:var(--line);flex-shrink:0}
+  .progress .fill{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accentDark));
+                  transition:width .45s cubic-bezier(.4,0,.2,1)}
+
+  /* ---- Intro / landing ---- */
+  .intro{position:absolute;inset:0;background:var(--panel);z-index:20;display:flex;flex-direction:column;
+         justify-content:center;padding:34px 28px calc(28px + env(safe-area-inset-bottom));gap:18px;
+         animation:fade .3s ease;overflow-y:auto}
+  .intro .shield{width:60px;height:60px;color:var(--accent);flex-shrink:0}
+  .intro h2{margin:0;font-size:23px;font-weight:800;line-height:1.3;color:var(--txt)}
+  .intro .lead{margin:0;font-size:14.5px;color:var(--muted);line-height:1.55}
+  .intro ul{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column;gap:12px}
+  .intro li{display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--txt);line-height:1.5}
+  .intro li span{white-space:pre-line}
+  .intro li svg{width:20px;height:20px;flex-shrink:0;color:var(--ok);margin-top:1px}
+  .startBtn{margin-top:8px;background:var(--accent);color:#fff;border:none;border-radius:14px;
+            padding:15px;font-size:16px;font-weight:700;cursor:pointer;transition:.15s;font-family:inherit}
+  .startBtn:hover{background:var(--accentDark)}
+  .startBtn.secondary{background:transparent;color:var(--accent);border:1.5px solid var(--accent);margin-top:0}
+  .startBtn.secondary:hover{background:var(--accentTint);color:var(--accent)}
+  .intro .law{font-size:11.5px;color:var(--faint);text-align:center;line-height:1.5;margin:0;white-space:pre-line}
+
+  /* ---- Chat ---- */
+  .chat{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:12px;scroll-behavior:smooth}
+  .row{display:flex;gap:8px;align-items:flex-end;animation:fade .25s ease}
+  .row.user{flex-direction:row-reverse}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .av{width:30px;height:30px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;
+      justify-content:center;background:var(--bot);color:var(--accent)}
+  .av svg{width:17px;height:17px}
+  .row.user .av{background:var(--user);color:#fff}
+  .bubble{max-width:78%;padding:11px 14px;border-radius:16px;font-size:14.5px;line-height:1.55;
+          background:var(--bot);color:var(--botTxt);border-bottom-left-radius:4px;
+          white-space:pre-wrap;word-break:break-word}
+  .row.user .bubble{background:var(--user);color:var(--userTxt);border-bottom-right-radius:4px;border-bottom-left-radius:16px}
+
+  /* typing indicator */
+  .bubble.typing{display:inline-flex;gap:5px;align-items:center;padding:14px}
+  .bubble.typing span{width:7px;height:7px;border-radius:50%;background:var(--faint);opacity:.5;
+                      animation:blink 1.2s infinite ease-in-out}
+  .bubble.typing span:nth-child(2){animation-delay:.2s}
+  .bubble.typing span:nth-child(3){animation-delay:.4s}
+  @keyframes blink{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-4px);opacity:1}}
+
+  /* sending spinner */
+  .sending{display:inline-flex;align-items:center;gap:9px}
+  .spinner{width:15px;height:15px;border:2px solid var(--line);border-top-color:var(--accent);
+           border-radius:50%;animation:spin 1.6s linear infinite;flex-shrink:0}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* 타이핑 커서 — 답변이 한 글자씩 나오는 동안 깜빡인다 */
+  .caret{display:inline-block;width:2px;height:1.05em;background:var(--accent);
+         margin-left:1px;vertical-align:-2px;animation:caretBlink 1.1s step-end infinite}
+  @keyframes caretBlink{50%{opacity:0}}
+
+  /* ---- Options / quick replies ---- */
+  .opts{display:flex;flex-wrap:wrap;gap:8px;padding:0 18px 8px;justify-content:flex-start}
+  .opt{background:transparent;border:1.5px solid var(--accent);color:var(--accent);
+       padding:9px 15px;border-radius:20px;font-size:13.5px;cursor:pointer;transition:.15s;font-family:inherit}
+  .opt:hover{background:var(--accent);color:#fff}
+  .opt.primary{background:var(--accent);color:#fff}
+  .opt.primary:hover{background:var(--accentDark)}
+
+  /* ---- Attachment chips ---- */
+  .chips{display:flex;flex-wrap:wrap;gap:7px;width:100%;margin-bottom:2px}
+  .chip{display:inline-flex;align-items:center;gap:7px;background:var(--bot);color:var(--botTxt);
+        border:1px solid var(--line);border-radius:10px;padding:6px 8px 6px 10px;font-size:12.5px;max-width:100%}
+  .chip .nm{max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .chip .sz{color:var(--faint);font-size:11px}
+  .chip .x{background:transparent;border:none;color:var(--faint);cursor:pointer;font-size:16px;
+           line-height:1;padding:0 2px;border-radius:6px;font-family:inherit}
+  .chip .x:hover{color:var(--warn)}
+
+  /* ---- Reassurance bar ---- */
+  .reassure{display:flex;align-items:center;gap:6px;justify-content:center;font-size:11.5px;
+            color:var(--muted);padding:6px 12px;border-top:1px solid var(--line);background:var(--accentTint)}
+  .reassure svg{width:13px;height:13px;color:var(--accent);flex-shrink:0}
+
+  /* ---- Input bar ---- */
+  .inputbar{display:flex;gap:8px;padding:12px;background:var(--panel);align-items:flex-end}
+  .back{background:transparent;border:none;padding:0;width:40px;height:44px;cursor:pointer;flex-shrink:0;
+        display:flex;align-items:center;justify-content:center;color:var(--accent);border-radius:12px}
+  .back:hover{background:var(--accentTint)}
+  .inputbar textarea{flex:1;resize:none;background:var(--bot);border:1.5px solid var(--line);
+       color:var(--txt);border-radius:12px;padding:11px 12px;font-size:14.5px;font-family:inherit;
+       height:44px;max-height:120px;line-height:1.4}
+  .inputbar textarea::placeholder{color:var(--faint)}
+  .inputbar textarea:focus{outline:none;border-color:var(--accent)}
+  .send{background:var(--accent);border:none;color:#fff;border-radius:12px;width:48px;height:44px;
+        cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .send:hover{background:var(--accentDark)}
+  .send:disabled{opacity:.4;cursor:not-allowed}
+
+  /* ---- Footer ---- */
+  .footnote{font-size:10.5px;color:var(--faint);text-align:center;
+            padding:7px 14px calc(9px + env(safe-area-inset-bottom));
+            line-height:1.45;background:var(--panel);border-top:1px solid var(--line)}
+
+  /* ---- Summary card ---- */
+  .summary{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:14px;font-size:13px}
+  .summary h4{margin:0 0 10px;color:var(--accent);font-size:13px}
+  .summary table{width:100%;border-collapse:collapse}
+  .summary td{padding:6px 4px;border-bottom:1px solid var(--line);vertical-align:top}
+  .summary td.k{color:var(--muted);width:36%;white-space:nowrap}
+
+  /* ---- Focus visibility (a11y) ---- */
+  :focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:6px}
+
+  /* ---- Reduced motion ---- */
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:.001s !important;transition-duration:.001s !important}
+    .chat{scroll-behavior:auto}
+  }
+
+  /* ---- Mobile: full-screen ---- */
+  @media (max-width:520px){
+    body{padding:0}
+    .app{max-width:none;height:100dvh;max-height:none;border:none;border-radius:0}
+  }
+</style>
 </head>
 <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
+<div class="app">
+  <header>
+    <div class="htop">
+      <div class="logo">에스원</div>
+      <div>
+        <h1 id="hTitle"></h1>
+        <p id="hSub"></p>
+      </div>
+      <span class="badge" id="hBadge">
+        <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" aria-hidden="true"><path d="M12 1 3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+        <span id="hBadgeTxt"></span>
+      </span>
+    </div>
+    <div class="langbar" id="langbar" role="group" aria-label="Language"></div>
+  </header>
+
+  <div class="progress" aria-hidden="true"><div class="fill" id="progressFill"></div></div>
+
+  <!-- Intro / landing -->
+  <div class="intro" id="intro" role="dialog" aria-labelledby="introTitle">
+    <svg class="shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+      <path d="M12 3 4 6v6c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V6l-8-3z"/>
+      <path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <h2 id="introTitle"></h2>
+    <p class="lead" id="introLead"></p>
+    <ul id="introPoints"></ul>
+    <button class="startBtn" id="startBtn"></button>
+    <button class="startBtn secondary" id="askBtn"></button>
+    <p class="law" id="introLaw"></p>
+  </div>
+
+  <div class="chat" id="chat" role="log" aria-live="polite" aria-atomic="false"></div>
+  <div class="opts" id="opts"></div>
+
+  <div class="reassure" id="reassure">
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1 3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+    <span id="reassureTxt"></span>
+  </div>
+
+  <div class="inputbar" id="inputbar">
+    <button class="back" id="back" style="display:none">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <textarea id="text" rows="1"></textarea>
+    <button class="send" id="send">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+    </button>
+  </div>
+  <div class="footnote" id="hFoot"></div>
+</div>
+
+<script>
+/* ===================== 설정 (여기만 수정하면 됩니다) ===================== */
+const CONFIG = {
+  // 방법 A. Google Apps Script (첨부 지원, 추천) — 웹앱 /exec 주소
+  APPSCRIPT_ENDPOINT: "https://script.google.com/macros/s/AKfycbw9Cx_ifTKXYg4fUzHOj7Whnb-io2mWlMMmcxcCHp8IJRaHjSzQaraW2bEwVhCD5b8WbA/exec",
+  // 방법 B. Formspree (첨부 미지원)
+  //  ※ 제보 본문이 외부 SaaS로 전송되므로 운영에서는 비워 둔다.
+  //    사용하려면 보안 검토 후 주소를 채울 것.
+  FORMSPREE_ENDPOINT: "",
+  // 방법 C. EmailJS
+  EMAILJS: { PUBLIC_KEY:"", SERVICE_ID:"", TEMPLATE_ID:"" },
+  // 방법 D. 모두 비면 mailto(메일앱)
+  RECIPIENT_EMAIL: "audit@company.com",
+  MAX_FILE_MB: 10,
+  MAX_TOTAL_MB: 25,
+  // 문제 진단용. true 로 두면 서버 오류 원인이 화면에 그대로 표시된다.
+  // 주소 끝에 ?debug=1 을 붙여도 켜진다. 운영 시에는 false 로 둘 것.
+  DEBUG: false
+};
+const DEBUG = CONFIG.DEBUG || /[?&]debug=1/.test(location.search);
+/* ====================================================================== */
+
+/* ===================== 다국어 문구 ===================== */
+const LANG = {
+  ko:{ name:"한국어", flag:"한국어",
+    title:"에스원 윤리·감사 제보 채널", sub:"경영진단 / 내부 윤리제보 접수", badge:"비밀보장",
+    foot:"본 채널은 사내 규정에 따라 운영됩니다.",
+    introTitle:"안심하고 제보하세요", introLead:"",
+    introPoints:["제보자의 신원을 보호합니다.","대화 내용은 경영진단팀에만 전달됩니다","익명으로 제보를 할 수 있습니다"],
+    startBtn:"제보 시작하기",
+    askBtn:"궁금한 점 문의하기",
+    qaGreeting:"윤리·제보와 관련해 궁금한 점을 물어보세요.\n예) 익명으로 제보해도 정말 신원이 보호되나요?",
+    qaThinking:"잠시만 기다려 주세요.",
+    qaError:"답변을 가져오지 못했습니다. 잠시 후 다시 시도해 주세요.",
+    qaErrLocal:"⚠️ 이 페이지를 파일에서 직접 연 상태(file://)에서는 문의 기능이 동작하지 않습니다.\n웹 서버(https)에 올린 주소로 접속해 주세요.",
+    qaToReport:"제보하기",
+    introLaw:"본 채널은 사내 규정에 따라 운영됩니다.\n\n[개인정보 관리]\n• 제보 내용은 경영진단팀 담당자만 확인합니다",
+    reassure:"대화 내용과 신원은 안전하게 보호됩니다",
+    inputOn:"여기에 입력하세요...", inputOff:"위 버튼을 선택하세요",
+    sendAria:"전송", backAria:"이전 단계로", typingAria:"입력 중", removeAria:"첨부 삭제",
+    greeting:"안녕하세요, 에스원 윤리·감사 제보 채널입니다. 접수된 내용은 경영진단팀에 직접 전달되며, 제보자 신원은 철저히 보호됩니다.\n\n먼저, 어떤 방식으로 제보하시겠어요?",
+    anonOpts:["익명으로 제보","실명으로 제보"],
+    qCategory:"제보 유형을 선택해 주세요.",
+    categories:["거래업체 관련","회사공금 및 자산 관련","근무기강 관련","정보 및 인력 유출관련","기타"],
+    qWhen:"그 일이 언제쯤 있었는지 알려주실 수 있을까요? 정확하지 않아도 괜찮아요. (예: 2026년 5월쯤, 최근 3개월 사이)",
+    qDept:"관련된 부서 또는 장소를 알려주세요. (예: 구매팀, 본사 3층 등)",
+    qWho:"부정행위에 연루된 인물(직책·이름)을 알려주세요. 모르거나 밝히고 싶지 않으면 '알 수 없음'이라고 입력해 주세요.",
+    qDetail:"어떤 일이 있었는지 자세히 설명해 주세요. 누가·언제·어디서·무엇을·어떻게·왜 그랬는지 최대한 구체적으로 적어주세요. (최소 10자 이상)",
+    qEvidence:"관련 증빙 자료(문서, 사진, 메일, 녹취 등)를 보유하고 계신가요?",
+    evidenceOpts:["있음 - 제출 가능","있음 - 제출 어려움","없음"],
+    qAttach:"증빙 파일을 첨부해 주세요. (여러 개 가능, 파일당 10MB 이하)\n다 되었으면 '다음'을 누르세요.",
+    attachPick:"파일 선택", attachNext:"다음 →", attachWait:"첨부 처리 중...",
+    attachTooBig:"'{n}'은(는) 10MB를 초과해 제외했습니다.", attachNone:"없음",
+    attachUploading:"📁 {n} ({s}) 업로드 중...", attachDone:"✅ {n} 첨부됨",
+    attachBadType:"⚠️ '{n}'은(는) 지원하지 않는 형식입니다. (PDF, 이미지, Office 문서, 텍스트만 가능)",
+    attachTotalBig:"⚠️ 첨부 전체 용량이 {m}MB를 넘어 '{n}'은(는) 제외했습니다. 파일을 나눠 제보해 주세요.",
+    elapsed:"(처리 완료: {s}초)",
+    qName:"실명 제보를 선택하셨습니다. 제보자 성명을 입력해 주세요.",
+    qContact:"추가 확인이 필요할 수 있습니다. 연락 가능한 이메일 또는 전화번호를 남겨주세요.",
+    sumTitle:"제보 내용 확인",
+    L:{anon:"제보 방식",category:"제보 유형",when:"발생 시기",dept:"부서/장소",who:"관련 인물",evidence:"증빙 자료",files:"첨부파일",name:"성명",contact:"연락처",detail:"상세 내용"},
+    qConfirm:"위 내용으로 제보를 접수할까요?",
+    confirmOpts:["제보 접수","처음부터 다시"],
+    sending:"제보를 전송 중입니다...",
+    success:"제보가 정상적으로 접수되었습니다.",
+    doneTpl:"소중한 제보에 감사드립니다.\n\n{extra}",
+    refNote:"\n\n접수번호: {ref}\n※ 진행 상황 문의 시 이 번호를 알려주세요. 화면을 닫으면 다시 확인할 수 없으니 따로 적어두시기 바랍니다.",
+    mailtoExtra:"메일앱이 열렸습니다. '보내기'를 눌러 제출을 완료해 주세요.",
+    errHttp:"전송에 실패했습니다. 잠시 후 다시 시도하거나 관리자에게 문의해 주세요. (HTTP {s})",
+    errNet:"네트워크 오류로 전송하지 못했습니다. 연결 상태를 확인 후 다시 시도해 주세요.",
+    retry:"다시 시도",
+    anonContact:"(익명 제보)" },
+
+  en:{ name:"English", flag:"EN",
+    title:"S-1 Ethics & Audit Report Channel", sub:"Internal whistleblowing intake", badge:"Confidential",
+    foot:"This channel operates under internal company regulations.",
+    introTitle:"Report with confidence", introLead:"",
+    introPoints:["We protect the reporter's identity.","Your conversation is shared only with the Audit team","You can report anonymously"],
+    startBtn:"Start a report",
+    askBtn:"Ask a question",
+    qaGreeting:"Ask anything about ethics reporting.\ne.g., If I report anonymously, is my identity really protected?",
+    qaThinking:"Please wait a moment.",
+    qaError:"Couldn't get an answer. Please try again in a moment.",
+    qaErrLocal:"⚠️ The Q&A feature does not work when this page is opened directly from a file (file://).\nPlease access it from the hosted https address.",
+    qaToReport:"File a report",
+    introLaw:"This channel operates under internal company regulations.\n\n[Personal Information Management]\n• Report content is viewed only by Audit team members",
+    reassure:"Your conversation and identity are kept protected",
+    inputOn:"Type here...", inputOff:"Please choose an option above",
+    sendAria:"Send", backAria:"Previous step", typingAria:"Typing", removeAria:"Remove attachment",
+    greeting:"Hello, this is the S-1 Ethics & Audit reporting channel. Your report goes directly to the Management Audit team, and your identity is strictly protected.\n\nFirst, how would you like to report?",
+    anonOpts:["Report anonymously","Report with my name"],
+    qCategory:"Please select the type of report.",
+    categories:["Suppliers & business partners","Company funds & assets","Workplace conduct & discipline","Information & personnel leakage","Other"],
+    qWhen:"Could you tell me roughly when this happened? It's okay if you're not sure. (e.g., around May 2026, sometime in the last 3 months)",
+    qDept:"Which department or location is involved? (e.g., Procurement team, HQ 3rd floor)",
+    qWho:"Please share the names/titles of anyone involved in the misconduct. If unknown or you'd rather not say, type 'Unknown'.",
+    qDetail:"Please describe what happened in detail. Include who, when, where, what, how, and why as specifically as possible. (Minimum 10 characters)",
+    qEvidence:"Do you have any supporting evidence (documents, photos, emails, recordings)?",
+    evidenceOpts:["Yes - can submit","Yes - hard to submit","None"],
+    qAttach:"Please attach your evidence files (multiple allowed, up to 10MB each).\nTap 'Next' when done.",
+    attachPick:"Choose file", attachNext:"Next →", attachWait:"Processing attachments...",
+    attachTooBig:"'{n}' exceeds 10MB and was skipped.", attachNone:"None",
+    attachUploading:"📁 Uploading {n} ({s})...", attachDone:"✅ {n} attached",
+    attachBadType:"⚠️ '{n}' is not a supported file type. (PDF, images, Office documents and text only)",
+    attachTotalBig:"⚠️ Total attachment size would exceed {m}MB, so '{n}' was skipped. Please split your files across separate reports.",
+    elapsed:"(completed in {s}s)",
+    qName:"You chose to report with your name. Please enter your full name.",
+    qContact:"We may need to follow up. Please leave an email or phone number we can reach you at.",
+    sumTitle:"Review your report",
+    L:{anon:"Method",category:"Type",when:"When",dept:"Dept/Location",who:"People involved",evidence:"Evidence",files:"Attachments",name:"Name",contact:"Contact",detail:"Details"},
+    qConfirm:"Shall I submit this report?",
+    confirmOpts:["Submit","Start over"],
+    sending:"Submitting your report...",
+    success:"Your report has been submitted successfully.",
+    doneTpl:"Thank you for your report.\n\n{extra}",
+    refNote:"\n\nReference number: {ref}\n※ Please quote this number when following up. It cannot be retrieved once you close this screen, so please make a note of it.",
+    mailtoExtra:"Your mail app opened. Press 'Send' to complete submission.",
+    errHttp:"Submission failed. Please try again later or contact the administrator. (HTTP {s})",
+    errNet:"Network error, could not submit. Check your connection and try again.",
+    retry:"Try again",
+    anonContact:"(anonymous report)" },
+
+  zh:{ name:"中文", flag:"中文",
+    title:"S-1 道德与审计举报通道", sub:"内部举报受理", badge:"保密",
+    foot:"本通道依据公司内部规定运营。",
+    introTitle:"请放心举报", introLead:"",
+    introPoints:["我们保护举报人的身份。","对话内容仅传达至经营诊断团队","您可以匿名举报"],
+    startBtn:"开始举报",
+    askBtn:"我要咨询",
+    qaGreeting:"有关道德与举报的问题都可以问我。\n例如：匿名举报真的能保护我的身份吗？",
+    qaThinking:"请稍候...",
+    qaError:"未能获取答案，请稍后再试。",
+    qaErrLocal:"⚠️ 以本地文件方式（file://）打开此页面时，咨询功能无法使用。\n请通过已部署的 https 网址访问。",
+    qaToReport:"我要举报",
+    introLaw:"本通道依据公司内部规定运营。\n\n[个人信息管理]\n• 举报内容仅由经营诊断团队负责人查看",
+    reassure:"对话内容与您的身份将受到保护",
+    inputOn:"在此输入...", inputOff:"请选择上方选项",
+    sendAria:"发送", backAria:"上一步", typingAria:"正在输入", removeAria:"删除附件",
+    greeting:"您好，这里是S-1道德与审计举报通道。您的举报将直接转交经营诊断团队，举报人身份将受到严格保护。\n\n首先，您希望以哪种方式举报？",
+    anonOpts:["匿名举报","实名举报"],
+    qCategory:"请选择举报类型。",
+    categories:["交易/供应商相关","公司资金及资产相关","工作纪律相关","信息及人才外泄相关","其他"],
+    qWhen:"方便告诉我大概是什么时候发生的吗？不确定也没关系。(例如：2026年5月前后、最近3个月内)",
+    qDept:"涉及哪个部门或地点？(例如：采购部、总部3楼)",
+    qWho:"请提供涉及不当行为的人员职务/姓名。如不清楚或不愿透露，请输入'不清楚'。",
+    qDetail:"请详细描述发生了什么。尽可能具体地包括：谁、何时、何地、做了什么、怎么发生、为什么。(最少10个字符)",
+    qEvidence:"您是否持有相关证据（文件、照片、邮件、录音）？",
+    evidenceOpts:["有 - 可提交","有 - 难以提交","无"],
+    qAttach:"请上传证据文件（可多个，每个不超过10MB）。\n完成后请点击'下一步'。",
+    attachPick:"选择文件", attachNext:"下一步 →", attachWait:"附件处理中...",
+    attachTooBig:"'{n}' 超过10MB，已跳过。", attachNone:"无",
+    attachUploading:"📁 正在上传 {n}（{s}）...", attachDone:"✅ 已附加 {n}",
+    attachBadType:"⚠️ '{n}' 是不支持的文件格式。（仅支持 PDF、图片、Office 文档和文本）",
+    attachTotalBig:"⚠️ 附件总容量将超过 {m}MB，已跳过 '{n}'。请分次举报上传。",
+    elapsed:"（处理完成：{s}秒）",
+    qName:"您选择了实名举报。请输入举报人姓名。",
+    qContact:"我们可能需要进一步核实。请留下可联系的邮箱或电话。",
+    sumTitle:"确认举报内容",
+    L:{anon:"方式",category:"类型",when:"发生时间",dept:"部门/地点",who:"相关人员",evidence:"证据",files:"附件",name:"姓名",contact:"联系方式",detail:"详细内容"},
+    qConfirm:"确认提交此举报吗？",
+    confirmOpts:["提交举报","重新开始"],
+    sending:"正在提交举报...",
+    success:"您的举报已成功提交。",
+    doneTpl:"感谢您的举报。\n\n{extra}",
+    refNote:"\n\n受理编号：{ref}\n※ 咨询处理进度时请提供此编号。关闭此页面后将无法再次查看，请另行记录。",
+    mailtoExtra:"已打开邮件应用。请点击'发送'完成提交。",
+    errHttp:"提交失败。请稍后重试或联系管理员。(HTTP {s})",
+    errNet:"网络错误，无法提交。请检查连接后重试。",
+    retry:"重试",
+    anonContact:"（匿名举报）" },
+
+  vi:{ name:"Tiếng Việt", flag:"VI",
+    title:"Kênh báo cáo Đạo đức & Kiểm toán S-1", sub:"Tiếp nhận tố giác nội bộ", badge:"Bảo mật",
+    foot:"Kênh này hoạt động theo quy định nội bộ của công ty.",
+    introTitle:"Yên tâm báo cáo", introLead:"",
+    introPoints:["Chúng tôi bảo vệ danh tính người báo cáo.","Nội dung trò chuyện chỉ được chuyển đến bộ phận Kiểm toán","Bạn có thể báo cáo ẩn danh"],
+    startBtn:"Bắt đầu báo cáo",
+    askBtn:"Đặt câu hỏi",
+    qaGreeting:"Hãy hỏi bất cứ điều gì về đạo đức & tố giác.\nVd: Nếu báo cáo ẩn danh, danh tính của tôi có thực sự được bảo vệ không?",
+    qaThinking:"Vui lòng đợi một chút.",
+    qaError:"Không lấy được câu trả lời. Vui lòng thử lại sau.",
+    qaErrLocal:"⚠️ Tính năng hỏi đáp không hoạt động khi mở trang này trực tiếp từ tệp (file://).\nVui lòng truy cập qua địa chỉ https đã triển khai.",
+    qaToReport:"Gửi báo cáo",
+    introLaw:"Kênh này hoạt động theo quy định nội bộ của công ty.\n\n[Quản lý Thông tin Cá nhân]\n• Nội dung báo cáo chỉ được xem bởi nhân viên phụ trách bộ phận Kiểm toán",
+    reassure:"Nội dung trò chuyện và danh tính của bạn được bảo vệ",
+    inputOn:"Nhập tại đây...", inputOff:"Vui lòng chọn một mục ở trên",
+    sendAria:"Gửi", backAria:"Bước trước", typingAria:"Đang nhập", removeAria:"Xóa tệp đính kèm",
+    greeting:"Xin chào, đây là kênh báo cáo Đạo đức & Kiểm toán của S-1. Báo cáo của bạn được gửi trực tiếp đến bộ phận Kiểm toán Quản lý, và danh tính của bạn được bảo vệ nghiêm ngặt.\n\nTrước tiên, bạn muốn báo cáo theo cách nào?",
+    anonOpts:["Báo cáo ẩn danh","Báo cáo nêu tên"],
+    qCategory:"Vui lòng chọn loại báo cáo.",
+    categories:["Đối tác / nhà cung cấp","Quỹ và tài sản công ty","Kỷ luật lao động","Rò rỉ thông tin & nhân lực","Khác"],
+    qWhen:"Bạn có thể cho biết sự việc xảy ra khoảng khi nào không? Không chắc chắn cũng không sao. (vd: khoảng tháng 5/2026, trong 3 tháng gần đây)",
+    qDept:"Bộ phận hoặc địa điểm nào liên quan? (vd: Phòng mua hàng, tầng 3 trụ sở)",
+    qWho:"Vui lòng cung cấp tên/chức danh của những người liên quan đến hành vi sai trái. Nếu không rõ hoặc không muốn nêu, hãy nhập 'Không rõ'.",
+    qDetail:"Vui lòng mô tả chi tiết những gì đã xảy ra. Hãy cụ thể bao gồm: ai, khi nào, ở đâu, việc gì, như thế nào, tại sao. (Tối thiểu 10 ký tự)",
+    qEvidence:"Bạn có bằng chứng nào không (tài liệu, ảnh, email, ghi âm)?",
+    evidenceOpts:["Có - có thể nộp","Có - khó nộp","Không có"],
+    qAttach:"Vui lòng đính kèm tệp bằng chứng (nhiều tệp, mỗi tệp tối đa 10MB).\nNhấn 'Tiếp tục' khi xong.",
+    attachPick:"Chọn tệp", attachNext:"Tiếp tục →", attachWait:"Đang xử lý tệp đính kèm...",
+    attachTooBig:"'{n}' vượt quá 10MB nên bị bỏ qua.", attachNone:"Không có",
+    attachUploading:"📁 Đang tải lên {n} ({s})...", attachDone:"✅ Đã đính kèm {n}",
+    attachBadType:"⚠️ '{n}' là định dạng tệp không được hỗ trợ. (Chỉ PDF, hình ảnh, tài liệu Office và văn bản)",
+    attachTotalBig:"⚠️ Tổng dung lượng tệp đính kèm sẽ vượt {m}MB nên đã bỏ qua '{n}'. Vui lòng chia tệp thành nhiều báo cáo.",
+    elapsed:"(hoàn tất trong {s} giây)",
+    qName:"Bạn đã chọn báo cáo nêu tên. Vui lòng nhập họ tên của bạn.",
+    qContact:"Chúng tôi có thể cần liên hệ thêm. Vui lòng để lại email hoặc số điện thoại.",
+    sumTitle:"Xác nhận báo cáo",
+    L:{anon:"Hình thức",category:"Loại",when:"Thời gian",dept:"Bộ phận/Địa điểm",who:"Người liên quan",evidence:"Bằng chứng",files:"Tệp đính kèm",name:"Họ tên",contact:"Liên hệ",detail:"Chi tiết"},
+    qConfirm:"Tôi gửi báo cáo này nhé?",
+    confirmOpts:["Gửi báo cáo","Làm lại từ đầu"],
+    sending:"Đang gửi báo cáo...",
+    success:"Báo cáo của bạn đã được gửi thành công.",
+    doneTpl:"Cảm ơn bạn đã báo cáo.\n\n{extra}",
+    refNote:"\n\nMã tiếp nhận: {ref}\n※ Vui lòng cung cấp mã này khi hỏi về tiến độ xử lý. Bạn sẽ không xem lại được sau khi đóng màn hình, hãy ghi lại mã này.",
+    mailtoExtra:"Ứng dụng email đã mở. Nhấn 'Gửi' để hoàn tất.",
+    errHttp:"Gửi thất bại. Vui lòng thử lại sau hoặc liên hệ quản trị viên. (HTTP {s})",
+    errNet:"Lỗi mạng, không thể gửi. Kiểm tra kết nối và thử lại.",
+    retry:"Thử lại",
+    anonContact:"(to giac an danh)" },
+
+  ms:{ name:"Bahasa Melayu", flag:"MS",
+    title:"Saluran Laporan Etika & Audit S-1", sub:"Penerimaan aduan dalaman", badge:"Sulit",
+    foot:"Saluran ini dikendalikan menurut peraturan dalaman syarikat.",
+    introTitle:"Buat laporan dengan yakin", introLead:"",
+    introPoints:["Kami melindungi identiti pemberi maklumat.","Kandungan perbualan hanya disampaikan kepada pasukan Audit","Anda boleh membuat laporan tanpa nama"],
+    startBtn:"Mulakan laporan",
+    askBtn:"Ajukan soalan",
+    qaGreeting:"Tanyakan apa sahaja tentang etika & pemberian maklumat.\nCth: Jika saya membuat laporan tanpa nama, adakah identiti saya benar-benar dilindungi?",
+    qaThinking:"Sila tunggu sebentar.",
+    qaError:"Tidak dapat memperoleh jawapan. Sila cuba lagi sebentar nanti.",
+    qaErrLocal:"⚠️ Fungsi pertanyaan tidak berfungsi apabila halaman ini dibuka terus daripada fail (file://).\nSila akses melalui alamat https yang telah dihoskan.",
+    qaToReport:"Buat laporan",
+    introLaw:"Saluran ini dikendalikan menurut peraturan dalaman syarikat.\n\n[Pengurusan Maklumat Peribadi]\n• Kandungan laporan hanya dilihat oleh pegawai pasukan Audit",
+    reassure:"Perbualan dan identiti anda dilindungi",
+    inputOn:"Taip di sini...", inputOff:"Sila pilih pilihan di atas",
+    sendAria:"Hantar", backAria:"Langkah sebelumnya", typingAria:"Sedang menaip", removeAria:"Buang lampiran",
+    greeting:"Salam, ini ialah saluran laporan Etika & Audit S-1. Laporan anda dihantar terus kepada pasukan Audit Pengurusan, dan identiti anda dilindungi dengan ketat.\n\nPertama sekali, bagaimanakah anda ingin membuat laporan?",
+    anonOpts:["Lapor tanpa nama","Lapor dengan nama saya"],
+    qCategory:"Sila pilih jenis laporan.",
+    categories:["Rakan niaga / pembekal","Dana dan aset syarikat","Disiplin di tempat kerja","Kebocoran maklumat & tenaga kerja","Lain-lain"],
+    qWhen:"Bolehkah anda beritahu lebih kurang bila kejadian ini berlaku? Tidak mengapa jika anda tidak pasti. (cth: sekitar Mei 2026, dalam 3 bulan lepas)",
+    qDept:"Jabatan atau lokasi manakah yang terlibat? (cth: Bahagian Perolehan, tingkat 3 ibu pejabat)",
+    qWho:"Sila nyatakan nama/jawatan mereka yang terlibat dalam salah laku. Jika tidak pasti atau anda tidak mahu menyatakannya, taip 'Tidak pasti'.",
+    qDetail:"Sila terangkan dengan terperinci apa yang berlaku. Nyatakan siapa, bila, di mana, apa, bagaimana dan mengapa sespesifik mungkin. (Sekurang-kurangnya 10 aksara)",
+    qEvidence:"Adakah anda mempunyai bukti sokongan (dokumen, gambar, e-mel, rakaman)?",
+    evidenceOpts:["Ada - boleh dikemukakan","Ada - sukar dikemukakan","Tiada"],
+    qAttach:"Sila lampirkan fail bukti anda (boleh lebih daripada satu, setiap satu maksimum 10MB).\nTekan 'Seterusnya' apabila selesai.",
+    attachPick:"Pilih fail", attachNext:"Seterusnya →", attachWait:"Sedang memproses lampiran...",
+    attachTooBig:"'{n}' melebihi 10MB dan telah dilangkau.", attachNone:"Tiada",
+    attachUploading:"📁 Sedang memuat naik {n} ({s})...", attachDone:"✅ {n} telah dilampirkan",
+    attachBadType:"⚠️ '{n}' bukan jenis fail yang disokong. (Hanya PDF, imej, dokumen Office dan teks)",
+    attachTotalBig:"⚠️ Jumlah saiz lampiran akan melebihi {m}MB, jadi '{n}' telah dilangkau. Sila bahagikan fail kepada beberapa laporan.",
+    elapsed:"(selesai dalam {s} saat)",
+    qName:"Anda memilih untuk melapor dengan nama anda. Sila masukkan nama penuh anda.",
+    qContact:"Kami mungkin perlu menghubungi anda semula. Sila tinggalkan e-mel atau nombor telefon yang boleh dihubungi.",
+    sumTitle:"Semak laporan anda",
+    L:{anon:"Kaedah",category:"Jenis",when:"Bila",dept:"Jabatan/Lokasi",who:"Individu terlibat",evidence:"Bukti",files:"Lampiran",name:"Nama",contact:"Perhubungan",detail:"Butiran"},
+    qConfirm:"Bolehkah saya hantar laporan ini?",
+    confirmOpts:["Hantar laporan","Mula semula"],
+    sending:"Sedang menghantar laporan anda...",
+    success:"Laporan anda telah berjaya dihantar.",
+    doneTpl:"Terima kasih atas laporan anda.\n\n{extra}",
+    refNote:"\n\nNombor rujukan: {ref}\n※ Sila nyatakan nombor ini apabila bertanya tentang perkembangan kes. Ia tidak boleh disemak semula setelah skrin ditutup, sila catatkan.",
+    mailtoExtra:"Aplikasi e-mel anda telah dibuka. Tekan 'Hantar' untuk melengkapkan penghantaran.",
+    errHttp:"Penghantaran gagal. Sila cuba lagi sebentar nanti atau hubungi pentadbir. (HTTP {s})",
+    errNet:"Ralat rangkaian, tidak dapat menghantar. Sila semak sambungan anda dan cuba lagi.",
+    retry:"Cuba lagi",
+    anonContact:"(laporan tanpa nama)" }
+};
+const LANG_ORDER = ["ko","en","zh","vi","ms"];
+/* ====================================================================== */
+
+const chat=document.getElementById('chat'), optsEl=document.getElementById('opts');
+const textEl=document.getElementById('text'), sendBtn=document.getElementById('send');
+const backBtn=document.getElementById('back'), progressFill=document.getElementById('progressFill');
+const introEl=document.getElementById('intro'), startBtn=document.getElementById('startBtn'), askBtn=document.getElementById('askBtn');
+const REDUCE = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+let lang="ko", T=LANG.ko;
+const data={anonIdx:-1, categoryIdx:-1, evidenceIdx:-1, when:"", dept:"", who:"", detail:"", name:"", contact:"", files:[]};
+let step=0, pending=null, minLen=1, stepHistory=[], finished=false, started=false, mode="report", isSubmitting=false;
+
+const BOT_AV='<div class="av"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="8" r="4.2"/><path d="M3.6 20.6c0-4.7 3.8-8.2 8.4-8.2s8.4 3.5 8.4 8.2z"/></svg></div>';
+const USER_AV=BOT_AV;
+
+function applyChrome(){
+  document.documentElement.lang = lang;
+  document.getElementById('hTitle').textContent=T.title;
+  document.getElementById('hSub').textContent=T.sub;
+  document.getElementById('hBadgeTxt').textContent=T.badge;
+  document.getElementById('hFoot').textContent=T.foot;
+  document.getElementById('reassureTxt').textContent=T.reassure;
+  document.getElementById('introTitle').textContent=T.introTitle;
+  const leadEl=document.getElementById('introLead');
+  leadEl.textContent=T.introLead; leadEl.style.display=T.introLead?'':'none';
+  document.getElementById('introLaw').textContent=T.introLaw;
+  startBtn.textContent=T.startBtn;
+  askBtn.textContent=T.askBtn;
+  sendBtn.setAttribute('aria-label',T.sendAria);
+  backBtn.setAttribute('aria-label',T.backAria);
+  const ul=document.getElementById('introPoints'); ul.innerHTML='';
+  T.introPoints.forEach(p=>{
+    const li=document.createElement('li');
+    li.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span></span>';
+    li.querySelector('span').textContent=p;
+    ul.appendChild(li);
+  });
+}
+function buildLangBar(){
+  const bar=document.getElementById('langbar'); bar.innerHTML='';
+  LANG_ORDER.forEach(code=>{
+    const b=document.createElement('button');
+    b.className='lang'+(code===lang?' active':''); b.textContent=LANG[code].flag;
+    b.setAttribute('aria-pressed', code===lang?'true':'false');
+    b.onclick=()=>{ if(code!==lang) setLang(code); };
+    bar.appendChild(b);
+  });
+}
+function setLang(code){
+  lang=code; T=LANG[code];
+  applyChrome(); buildLangBar();
+  if(!started || finished) return;
+  if(mode==="qa") return;                 // 문의 모드는 대화 그대로 유지
+  if(data.anonIdx===0) data.contact=T.anonContact;
+  rerender();
+}
+
+function botSay(content,isNode){
+  const row=document.createElement('div'); row.className='row';
+  row.innerHTML=BOT_AV+'<div class="bubble"></div>';
+  if(isNode) row.querySelector('.bubble').appendChild(content);
+  else row.querySelector('.bubble').textContent=content;
+  chat.appendChild(row); scroll(); return row;
+}
+/* 답변을 한 글자씩 찍어 사람이 말하듯 보이게 한다.
+   문장부호에서 잠시 쉬어 리듬을 만든다. */
+function botType(text, done){
+  const row=document.createElement('div'); row.className='row';
+  row.innerHTML=BOT_AV+'<div class="bubble"><span class="tt"></span><span class="caret"></span></div>';
+  chat.appendChild(row); scroll();
+  const span=row.querySelector('.tt'), caret=row.querySelector('.caret');
+
+  // 모션 최소화 설정이면 즉시 표시
+  if(REDUCE){ span.textContent=text; caret.remove(); scroll(); if(done)done(); return row; }
+
+  const chars=Array.from(String(text));      // 한글·이모지 안전하게 분해
+  const base = chars.length>300 ? 12 : 26;   // 긴 답변은 조금 빠르게
+  let i=0;
+  (function step(){
+    if(i>=chars.length){ caret.remove(); scroll(); if(done)done(); return; }
+    const c=chars[i++];
+    span.textContent+=c;
+    let d=base;
+    if(c==='\n')                  d=base*4;   // 줄바꿈에서 숨 고르기
+    else if('.!?。！？'.indexOf(c)>=0) d=base*8;   // 문장 끝에서 멈칫
+    else if(',、·'.indexOf(c)>=0)     d=base*3;
+    if(i%6===0) scroll();
+    setTimeout(step, d);
+  })();
+  return row;
+}
+
+function userSay(text){
+  const row=document.createElement('div'); row.className='row user';
+  row.innerHTML=USER_AV+'<div class="bubble"></div>';
+  row.querySelector('.bubble').textContent=text;
+  chat.appendChild(row); scroll();
+}
+function options(list,cb){
+  optsEl.innerHTML='';
+  list.forEach((o,i)=>{
+    const b=document.createElement('button'); b.className='opt'; b.textContent=o;
+    b.onclick=()=>{ optsEl.innerHTML=''; cb(o,i); };
+    optsEl.appendChild(b);
+  });
+}
+function setInput(on){
+  textEl.disabled=!on; sendBtn.disabled=!on;
+  textEl.placeholder=on?T.inputOn:T.inputOff;
+  if(on) textEl.focus();
+}
+function scroll(){ setTimeout(()=>chat.scrollTop=chat.scrollHeight,30); }
+function expect(cb,min){ pending=cb; minLen=min||1; }
+
+/* typing indicator then run */
+function withTyping(fn){
+  if(REDUCE){ fn(); return; }
+  const row=document.createElement('div'); row.className='row';
+  row.innerHTML=BOT_AV+'<div class="bubble typing" aria-label="'+T.typingAria+'"><span></span><span></span><span></span></div>';
+  chat.appendChild(row); scroll();
+  setTimeout(()=>{ row.remove(); fn(); }, 520);
+}
+
+const flow=[
+  ()=>{ botSay(T.greeting); setInput(false);
+        options(T.anonOpts,(v,i)=>{ userSay(v); data.anonIdx=i; next(); });
+        addSwitchOpt(T.askBtn, switchToQA); },
+  ()=>{ botSay(T.qCategory); setInput(false);
+        options(T.categories,(v,i)=>{ userSay(v); data.categoryIdx=i; next(); }); },
+  ()=>{ botSay(T.qWhen); setInput(true); expect(v=>{ data.when=v; next(); }); },
+  ()=>{ botSay(T.qDept); setInput(true); expect(v=>{ data.dept=v; next(); }); },
+  ()=>{ botSay(T.qWho); setInput(true); expect(v=>{ data.who=v; next(); }); },
+  ()=>{ botSay(T.qDetail); setInput(true); expect(v=>{ data.detail=v; next(); },10); },
+  ()=>{ botSay(T.qEvidence); setInput(false);
+        options(T.evidenceOpts,(v,i)=>{ userSay(v); data.evidenceIdx=i; next(); }); },
+  ()=>{ if(data.evidenceIdx===0){ attachStep(); } else { next(); } },
+  ()=>{ if(data.anonIdx===1){ botSay(T.qName); setInput(true); expect(v=>{ data.name=v; next(); }); }
+        else { next(); } },
+  ()=>{ if(data.anonIdx===1){ botSay(T.qContact); setInput(true); expect(v=>{ data.contact=v; next(); }); }
+        else { data.contact=T.anonContact; next(); } },
+  ()=>{ showSummary(); }
+];
+function updateProgress(){
+  const pct = finished ? 100 : Math.min(100, Math.round(step/(flow.length-1)*100));
+  progressFill.style.width = pct + "%";
+}
+function runStep(){ stepHistory.push({step:step, chatLen:chat.children.length}); flow[step](); updateBack(); updateProgress(); }
+function next(){ step++; withTyping(runStep); }
+function updateBack(){ backBtn.style.display=(!finished && started && stepHistory.length>1)?'flex':'none'; }
+
+function clearStepData(s){
+  if(s===0)data.anonIdx=-1; else if(s===1)data.categoryIdx=-1; else if(s===2)data.when="";
+  else if(s===3)data.dept=""; else if(s===4)data.who=""; else if(s===5)data.detail="";
+  else if(s===6)data.evidenceIdx=-1; else if(s===7)data.files=[]; else if(s===8)data.name="";
+  else if(s===9)data.contact="";
+}
+function goBack(){
+  if(finished || stepHistory.length<2) return;
+  pending=null;
+  let cur=stepHistory.pop(), prev=null;
+  while(stepHistory.length){
+    const cand=stepHistory[stepHistory.length-1];
+    if(cand.chatLen < cur.chatLen){ prev=stepHistory.pop(); break; }
+    cur=stepHistory.pop();
+  }
+  if(!prev){ stepHistory.push(cur); return; }
+  while(chat.children.length > prev.chatLen) chat.removeChild(chat.lastChild);
+  optsEl.innerHTML=''; clearStepData(prev.step); step=prev.step; runStep();
+}
+
+function completedQA(s){
+  if(s===0) return {q:T.greeting, a:T.anonOpts[data.anonIdx]};
+  if(s===1) return {q:T.qCategory, a:T.categories[data.categoryIdx]};
+  if(s===2) return {q:T.qWhen, a:data.when};
+  if(s===3) return {q:T.qDept, a:data.dept};
+  if(s===4) return {q:T.qWho, a:data.who};
+  if(s===5) return {q:T.qDetail, a:data.detail};
+  if(s===6) return {q:T.qEvidence, a:T.evidenceOpts[data.evidenceIdx]};
+  if(s===7) return data.evidenceIdx===0 ? {q:T.qAttach, a:(data.files.length?data.files.map(f=>f.name).join(', '):T.attachNone)} : null;
+  if(s===8) return data.anonIdx===1 ? {q:T.qName, a:data.name} : null;
+  if(s===9) return data.anonIdx===1 ? {q:T.qContact, a:data.contact} : null;
+  return null;
+}
+function rerender(){
+  chat.innerHTML=''; optsEl.innerHTML=''; pending=null; stepHistory=[];
+  for(let s=0; s<step; s++){
+    stepHistory.push({step:s, chatLen:chat.children.length});
+    const r=completedQA(s);
+    if(r){ botSay(r.q); userSay(r.a); }
+  }
+  runStep();
+}
+
+/* ---- Attachments with chips ---- */
+function fmtSize(b){ if(b<1024)return b+" B"; if(b<1048576)return (b/1024).toFixed(0)+" KB"; return (b/1048576).toFixed(1)+" MB"; }
+/* 파일 읽기가 끝나기 전에 '다음'을 누르면 첨부가 조용히 누락되므로,
+   읽는 중에는 버튼을 잠근다. */
+let pendingReads=0, pendingBytes=0, attachNextBtn=null;
+function updateAttachBusy(){
+  if(!attachNextBtn) return;
+  const busy = pendingReads>0;
+  attachNextBtn.disabled = busy;
+  attachNextBtn.style.opacity = busy ? '.45' : '';
+  attachNextBtn.style.cursor  = busy ? 'not-allowed' : '';
+  attachNextBtn.textContent = busy ? T.attachWait : T.attachNext;
+}
+function attachStep(){
+  botSay(T.qAttach); setInput(false); optsEl.innerHTML='';
+  pendingReads=0; pendingBytes=0;
+  const chips=document.createElement('div'); chips.className='chips'; chips.id='chips';
+  const inp=document.createElement('input'); inp.type='file'; inp.multiple=true; inp.style.display='none';
+  const pick=document.createElement('button'); pick.className='opt'; pick.textContent="📎 "+T.attachPick;
+  pick.onclick=()=>inp.click();
+  const done=document.createElement('button'); done.className='opt primary'; done.textContent=T.attachNext;
+  done.onclick=()=>{ if(pendingReads>0) return; attachNextBtn=null; optsEl.innerHTML=''; next(); };
+  attachNextBtn=done;
+  inp.onchange=()=>{ readFiles(inp.files, chips); inp.value=''; };
+  optsEl.appendChild(chips); optsEl.appendChild(pick); optsEl.appendChild(done); optsEl.appendChild(inp);
+  renderChips(chips); updateAttachBusy();
+}
+function renderChips(chips){
+  chips.innerHTML='';
+  data.files.forEach((f,idx)=>{
+    const chip=document.createElement('span'); chip.className='chip';
+    chip.innerHTML='<span class="nm"></span><span class="sz">'+fmtSize(f.size||0)+'</span>';
+    chip.querySelector('.nm').textContent=f.name;
+    const x=document.createElement('button'); x.className='x'; x.textContent='×';
+    x.setAttribute('aria-label',T.removeAria+': '+f.name);
+    x.onclick=()=>{ data.files.splice(idx,1); renderChips(chips); };
+    chip.appendChild(x); chips.appendChild(chip);
+  });
+}
+function readFiles(fileList, chips){
+  const allowedTypes=['application/pdf','image/jpeg','image/png','image/gif','image/webp',
+    'application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/vnd.ms-excel','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'text/plain','application/vnd.ms-powerpoint'];
+  const allowedExts=['.pdf','.jpg','.jpeg','.png','.gif','.webp','.doc','.docx','.xls','.xlsx','.ppt','.pptx','.txt'];
+  // 이미 첨부된 용량 + 이번에 읽는 중인 용량을 함께 누적해 총량을 넘지 않게 한다
+  let queued = data.files.reduce((a,f)=>a+(f.size||0),0) + pendingBytes;
+  Array.from(fileList).forEach(file=>{
+    if(file.size > CONFIG.MAX_FILE_MB*1024*1024){ botSay(T.attachTooBig.replace('{n}',file.name)); return; }
+    const ext=file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+    const validType=allowedTypes.includes(file.type) || (file.type==='' && allowedExts.includes(ext));
+    if(!validType){ botSay(T.attachBadType.replace('{n}',file.name)); return; }
+    if(queued + file.size > CONFIG.MAX_TOTAL_MB*1024*1024){
+      botSay(T.attachTotalBig.replace('{n}',file.name).replace('{m}',CONFIG.MAX_TOTAL_MB)); return;
+    }
+    queued += file.size; pendingBytes += file.size; pendingReads++; updateAttachBusy();
+    botSay(T.attachUploading.replace('{n}',file.name).replace('{s}',fmtSize(file.size)));
+    const reader=new FileReader();
+    const finish=()=>{ pendingReads--; pendingBytes-=file.size; updateAttachBusy(); };
+    reader.onload=()=>{
+      const b64=String(reader.result).split(',')[1];
+      data.files.push({name:file.name, size:file.size, mimeType:file.type||'application/octet-stream', data:b64});
+      botSay(T.attachDone.replace('{n}',file.name));
+      renderChips(chips); finish();
+    };
+    reader.onerror=()=>{ botSay(T.attachBadType.replace('{n}',file.name)); finish(); };
+    reader.readAsDataURL(file);
+  });
+}
+
+sendBtn.onclick=submitText;
+textEl.addEventListener('keydown',e=>{ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); submitText(); }});
+textEl.addEventListener('input',()=>{
+  textEl.style.height='44px';
+  textEl.style.height=Math.min(textEl.scrollHeight,120)+'px';
+  if(step===5){
+    const len=textEl.value.length;
+    textEl.placeholder=T.inputOn+' ('+len+'/10 자)';
+  }
+});
+function submitText(){
+  const v=textEl.value.trim(); if(!pending) return;
+  if(v.length<minLen){ textEl.style.borderColor='var(--warn)'; setTimeout(()=>textEl.style.borderColor='',400); return; }
+  userSay(v); textEl.value=''; textEl.style.height='44px';
+  const cb=pending; pending=null; setInput(false); cb(v);
+}
+
+function showSummary(){
+  setInput(false);
+  const box=document.createElement('div'); box.className='summary';
+  const fileText = data.files.length ? data.files.map(f=>f.name).join(", ") : T.attachNone;
+  const rows=[
+    ['🙋', T.L.anon, T.anonOpts[data.anonIdx], 0],
+    ['📋', T.L.category, T.categories[data.categoryIdx], 1],
+    ['✍️', T.L.detail, data.detail, 5],
+    ['🕐', T.L.when, data.when, 2],
+    ['📍', T.L.dept, data.dept, 3],
+    ['👤', T.L.who, data.who, 4],
+    ['📄', T.L.evidence, T.evidenceOpts[data.evidenceIdx], 6],
+    ['📎', T.L.files, fileText, 7]
+  ];
+  if(data.anonIdx===1) rows.push(['📝', T.L.name, data.name, 8]);
+  rows.push(['📱', T.L.contact, data.contact, 9]);
+  box.innerHTML='<h4>'+esc(T.sumTitle)+'</h4><table>'+
+    rows.map((r,i)=>'<tr style="cursor:pointer" data-step="'+r[3]+'"><td class="k">'+r[0]+' '+esc(r[1])+'</td><td>'+esc(r[2])+'</td></tr>').join('')+'</table>';
+  const table=box.querySelector('table');
+  table.querySelectorAll('tr').forEach(tr=>{
+    tr.onclick=()=>{
+      const targetStep=parseInt(tr.dataset.step);
+      pending=null;
+      let cur=stepHistory.pop(), prev=null;
+      while(stepHistory.length && stepHistory[stepHistory.length-1].step!==targetStep) stepHistory.pop();
+      if(stepHistory.length && stepHistory[stepHistory.length-1].step===targetStep) prev=stepHistory.pop();
+      if(!prev){ stepHistory.push(cur); return; }
+      while(chat.children.length > prev.chatLen) chat.removeChild(chat.lastChild);
+      optsEl.innerHTML=''; step=prev.step; runStep();
+    };
+    tr.style.transition='background-color .2s';
+    tr.onmouseover=()=>tr.style.background='rgba(27,80,160,.05)';
+    tr.onmouseout=()=>tr.style.background='transparent';
+  });
+  botSay(box,true);
+  botSay(T.qConfirm);
+  // i===1 은 '처음부터 다시' — 이전에는 화면만 다시 그려 실제로 초기화되지 않았다
+  options(T.confirmOpts,(v,i)=>{ userSay(v); if(i===1){ switchToReport(); } else deliver(); });
+}
+
+/* 제보 1건당 1개. 재시도해도 동일하게 유지되어 서버에서 중복 접수를 막는다. */
+let clientId="";
+function newClientId(){
+  if(window.crypto && crypto.randomUUID) return crypto.randomUUID();
+  return 'c-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,10);
+}
+
+function buildBody(){
+  const K=LANG.ko;
+  if(!clientId) clientId=newClientId();
+  const body=
+"■ 윤리·감사 제보 접수\n"+
+"접수일시: "+new Date().toLocaleString('ko-KR')+"\n"+
+"작성언어: "+T.name+"\n\n"+
+"[제보 방식] "+K.anonOpts[data.anonIdx]+"\n"+
+"[제보 유형] "+K.categories[data.categoryIdx]+"\n"+
+"[발생 시기] "+data.when+"\n"+
+"[부서/장소] "+data.dept+"\n"+
+"[관련 인물] "+data.who+"\n"+
+"[증빙 자료] "+K.evidenceOpts[data.evidenceIdx]+"\n"+
+"[첨부파일] "+(data.files.length? data.files.map(f=>f.name).join(", ") : "없음")+"\n"+
+"[성    명] "+(data.anonIdx===1? data.name : "(익명)")+"\n"+
+"[연 락 처] "+data.contact+"\n\n"+
+"[상세 내용]\n"+data.detail+"\n";
+  const fields={
+    channel:"챗봇",
+    anon:K.anonOpts[data.anonIdx], category:K.categories[data.categoryIdx],
+    when:data.when, dept:data.dept, who:data.who,
+    name:(data.anonIdx===1? data.name : "(익명)"), contact:data.contact,
+    evidence:K.evidenceOpts[data.evidenceIdx],
+    files:(data.files.length? data.files.map(f=>f.name).join(", ") : "없음"),
+    detail:data.detail, lang:T.name
+  };
+  // 접수번호(ref)는 서버가 발급한다. subject 앞머리에 서버가 덧붙인다.
+  return { ref:"", clientId, subject:"[윤리제보] "+K.categories[data.categoryIdx], body, fields };
+}
+
+function deliver(){
+  if(isSubmitting) return;
+  isSubmitting=true;
+  finished=true; updateBack(); updateProgress();
+  const msg=buildBody(), cfg=CONFIG.EMAILJS;
+  if(CONFIG.APPSCRIPT_ENDPOINT) sendViaAppsScript(msg);
+  else if(CONFIG.FORMSPREE_ENDPOINT) sendViaFormspree(msg);
+  else if(cfg.PUBLIC_KEY&&cfg.SERVICE_ID&&cfg.TEMPLATE_ID) sendViaEmailJS(msg);
+  else {
+    window.location.href="mailto:"+CONFIG.RECIPIENT_EMAIL+"?subject="+encodeURIComponent(msg.subject)+"&body="+encodeURIComponent(msg.body);
+    doneMessage(msg.ref,T.mailtoExtra);
+  }
+}
+function sendingBubble(txt){
+  const node=document.createElement('span'); node.className='sending';
+  node.innerHTML='<span class="spinner" aria-hidden="true"></span>';
+  const t=document.createElement('span'); t.textContent=txt||T.sending; node.appendChild(t);
+  return botSay(node,true);
+}
+function failRetry(text){
+  isSubmitting=false;
+  botSay(text);
+  options([T.retry],()=>{ deliver(); });
+}
+function sendViaAppsScript(msg){
+  const s=sendingBubble();
+  const startTime=Date.now();
+  fetch(CONFIG.APPSCRIPT_ENDPOINT,{
+    method:"POST",
+    headers:{"Content-Type":"text/plain;charset=utf-8"},
+    body:JSON.stringify({ subject:msg.subject, body:msg.body, files:data.files,
+                          fields:msg.fields, clientId:msg.clientId })
+  }).then(r=>{
+    if(!r.ok) throw new Error("HTTP "+r.status);
+    return r.json();
+  }).then(d=>{
+    if(s)s.remove();
+    if(!d || d.result!=="success"){ failRetry(T.errHttp.replace('{s}',(d&&d.message)||'')); return; }
+    const elapsed=((Date.now()-startTime)/1000).toFixed(1);
+    doneMessage(d.ref||msg.ref, T.success+"\n"+T.elapsed.replace('{s}',elapsed));
+  }).catch(()=>{ if(s)s.remove(); failRetry(T.errNet); });
+}
+function sendViaFormspree(msg){
+  const s=sendingBubble();
+  const startTime=Date.now();
+  fetch(CONFIG.FORMSPREE_ENDPOINT,{
+    method:"POST", headers:{"Content-Type":"application/json","Accept":"application/json"},
+    body:JSON.stringify({ _subject:msg.subject, ref:msg.ref, report:msg.body })
+  }).then(r=>{
+    if(s)s.remove();
+    if(r.ok){
+      const elapsed=((Date.now()-startTime)/1000).toFixed(1);
+      doneMessage(msg.ref,T.success+"\n"+T.elapsed.replace('{s}',elapsed));
+    } else failRetry(T.errHttp.replace('{s}',r.status));
+  }).catch(()=>{ if(s)s.remove(); failRetry(T.errNet); });
+}
+function sendViaEmailJS(msg){
+  const s=sendingBubble();
+  const startTime=Date.now();
+  const sc=document.createElement('script');
+  sc.src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js";
+  sc.onload=()=>{ emailjs.init({publicKey:CONFIG.EMAILJS.PUBLIC_KEY});
+    emailjs.send(CONFIG.EMAILJS.SERVICE_ID,CONFIG.EMAILJS.TEMPLATE_ID,{
+      subject:msg.subject, body:msg.body, reply_to:(data.contact.indexOf("@")>=0?data.contact:CONFIG.RECIPIENT_EMAIL)
+    }).then(()=>{
+      if(s)s.remove();
+      const elapsed=((Date.now()-startTime)/1000).toFixed(1);
+      doneMessage(msg.ref,T.success+"\n"+T.elapsed.replace('{s}',elapsed));
+    }).catch(err=>{ if(s)s.remove(); failRetry(T.errHttp.replace('{s}',(err&&err.text)||'')); });
+  };
+  sc.onerror=()=>{ if(s)s.remove(); failRetry(T.errNet); };
+  document.body.appendChild(sc);
+}
+function doneMessage(ref,extra){
+  var txt = T.doneTpl.replace('{extra}',extra);
+  // 접수번호는 서버가 발급한다. 없으면 빈 줄을 남기지 않고, 운영자가 알 수 있게 콘솔에 경고.
+  if(ref) txt += T.refNote.replace('{ref}',ref);
+  else console.warn("[제보] 서버가 접수번호를 반환하지 않았습니다. Code.gs 최신 버전이 배포되었는지 확인하세요.");
+  botSay(txt);
+}
+function esc(s){ return (s||'').replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];}); }
+
+function startChat(){
+  if(started) return; started=true; mode="report";
+  introEl.style.display='none';
+  withTyping(runStep);
+}
+
+/* ---- 문의(Q&A) 모드 ---- */
+function startQA(){
+  if(started) return; started=true; mode="qa";
+  introEl.style.display='none';
+  progressFill.style.width="50%";
+  withTyping(function(){ botSay(T.qaGreeting); qaReady(); });
+}
+function qaReady(){
+  setInput(true); expect(qaAsk, 2);
+  options([T.qaToReport], function(){ switchToReport(); });
+}
+function qaAsk(q){
+  const s=sendingBubble(T.qaThinking);
+  fetch(CONFIG.APPSCRIPT_ENDPOINT, {
+    method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"},
+    body: JSON.stringify({ action:"qa", question:q, lang:T.name })
+  }).then(function(r){
+      if(!r.ok) throw new Error("HTTP "+r.status);
+      return r.json();
+    })
+    .then(function(d){
+      if(s)s.remove();
+      if(d && d.answer){
+        // 타이핑이 끝난 뒤에 입력창을 열어 준다
+        botType(d.answer, qaReady);
+        return;
+      }
+      botSay(T.qaError);
+      if(DEBUG && d && d.message) botSay("🔧 서버 응답: "+d.message);
+      console.error("[QA] 서버가 답변을 반환하지 않음:", d);
+      qaReady();
+    })
+    .catch(function(err){
+      if(s)s.remove();
+      // CORS 차단은 TypeError(Failed to fetch)로 떨어진다 — 원인을 구분해 안내
+      var isCors = (err instanceof TypeError);
+      botSay(isCors && location.protocol==='file:' ? T.qaErrLocal : T.qaError);
+      if(DEBUG) botSay("🔧 "+(isCors ? "요청이 브라우저에서 차단됨(CORS). 접속 주소: "+location.protocol : String(err)));
+      console.error("[QA] 요청 실패:", err, "origin=", location.origin);
+      qaReady();
+    });
+}
+function resetData(){
+  data.anonIdx=-1; data.categoryIdx=-1; data.evidenceIdx=-1;
+  data.when=""; data.dept=""; data.who=""; data.detail=""; data.name=""; data.contact=""; data.files=[];
+  clientId="";                       // 새 제보 = 새 멱등키 (재사용하면 서버가 이전 건으로 판단)
+  pendingReads=0; pendingBytes=0; attachNextBtn=null;
+}
+function switchToReport(){
+  mode="report"; finished=false; step=0; pending=null; stepHistory=[];
+  chat.innerHTML=''; optsEl.innerHTML=''; resetData();
+  withTyping(runStep);
+}
+function switchToQA(){
+  mode="qa"; finished=false; step=0; pending=null; stepHistory=[];
+  chat.innerHTML=''; optsEl.innerHTML=''; resetData();
+  progressFill.style.width="0%";
+  withTyping(function(){ botSay(T.qaGreeting); qaReady(); });
+}
+// 옵션 버튼을 기존 목록에 덧붙임(모드 전환용)
+function addSwitchOpt(label, cb){
+  const b=document.createElement('button'); b.className='opt'; b.textContent=label;
+  b.onclick=function(){ optsEl.innerHTML=''; cb(); };
+  optsEl.appendChild(b);
+}
+
+startBtn.onclick=startChat;
+askBtn.onclick=startQA;
+backBtn.onclick=goBack;
+applyChrome(); buildLangBar(); updateProgress();
+</script>
 </body>
 </html>
